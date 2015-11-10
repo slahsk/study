@@ -14,8 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
+@Table(name="ORDERS")
 public class Order {
 	
 	@Id
@@ -25,6 +31,7 @@ public class Order {
 	
 	@ManyToOne
 	@JoinColumn(name="MEMBER_ID")
+	@JsonBackReference
 	private Member member;
 	
 	@OneToMany(mappedBy="order")
@@ -37,6 +44,7 @@ public class Order {
 	//private OrderStatus status;
 	
 	
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date orderDate;
 
 
@@ -80,6 +88,7 @@ public class Order {
 	public void setDelivery(Delivery delivery) {
 		this.delivery = delivery;
 	}
+
 
 
 	

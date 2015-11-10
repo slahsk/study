@@ -19,8 +19,8 @@ public class Delivery {
 	@Column(name="DELIVERY_ID")
 	private Long id;
 	
-	@OneToOne(mappedBy="delivery")
-	private Order order;
+/*	@OneToOne(mappedBy="delivery")
+	private Order order;*/
 	
 	@Embedded
 	private Address address;
@@ -36,13 +36,6 @@ public class Delivery {
 		this.id = id;
 	}
 
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
-	}
 
 	public Address getAddress() {
 		return address;
