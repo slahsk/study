@@ -1,4 +1,8 @@
 	
+	function sutbTestFn(a){
+		return testFn(a);
+	}
+
 	function testFn(a){
 		return a*a;
 	}
@@ -19,6 +23,26 @@
 	});
 	
 	
+	test("ajaxTest",function(){
+		
+		 var spy = sinon.spy(jQuery, "ajax");
+		 
+		 $.get("/ajaxTest");
+		 var spyCall = jQuery.ajax.getCall(0);
+		 
+		 ok("/some/resource", spyCall.args[0].url);
+		 ok("json", spyCall.args[0].dataType);
+		 
+		 $.get("/ajaxTest");
+		 var spyCall2 = jQuery.ajax.getCall(1);
+		 ok("/some/resource", spyCall2.args[0].url);
+		 ok("json", spyCall2.args[0].dataType);
+		 
+		 
+		 console.log(spyCall);
+		 jQuery.ajax.restore();
+	});
+	
 	module("stub")
 	
 	test("stubTest1",function(){
@@ -30,11 +54,11 @@
 	});
 	
 	test("stubTest2",function(){
-		var stub = sinon.stub(window,"testFn");
+		var stub = sinon.stub(window,"sutbTestFn");
 		stub.withArgs(1).returns(10);
 		stub.withArgs(10).returns(100);
 		
-		equal(testFn(1),10);
+		equal(sutbTestFn(1),10),"의존하고 있는 함수를 변경";
 	});
 	
 	module("mock")

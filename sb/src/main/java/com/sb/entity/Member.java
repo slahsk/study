@@ -1,4 +1,4 @@
-package com.sb.study.entity;
+package com.sb.entity;
 
 import java.util.ArrayList;
 import java.util.List;

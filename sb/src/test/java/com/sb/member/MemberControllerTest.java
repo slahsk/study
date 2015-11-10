@@ -1,14 +1,11 @@
-package com.sb.study;
+package com.sb.member;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.CoreMatchers.is;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,17 +21,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.sb.SbApplication;
-import com.sb.study.entity.Member;
+import com.sb.entity.Member;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SbApplication.class)
 @WebAppConfiguration
 @Transactional
-public class StudyControllerTest {
+public class MemberControllerTest {
 	
 	@Autowired
 	WebApplicationContext wac;
@@ -47,7 +43,7 @@ public class StudyControllerTest {
 	Gson gson;
 	
 	@Autowired
-	StudyService service;
+	MemberService service;
 	
 	@Before
 	public void setUp(){

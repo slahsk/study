@@ -1,4 +1,4 @@
-package com.sb.study;
+package com.sb.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sb.study.entity.Member;
+import com.sb.entity.Member;
 
 @Controller
-public class StudyController {
+public class MemberController {
 	
 	@Autowired
-	private StudyService studyService; 
+	private MemberService studyService; 
 	
 	@RequestMapping("/test")
     public String test() {
@@ -40,6 +40,11 @@ public class StudyController {
 		return new ResponseEntity<Member>(studyService.getMember(id),HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/member/delete/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Member> deleteMember(@PathVariable Long id){
+		studyService.deleteMember(id);
+		return new ResponseEntity<Member>(HttpStatus.NO_CONTENT);
+	}
 	
 	
 }

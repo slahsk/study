@@ -1,4 +1,4 @@
-package com.sb.study.entity;
+package com.sb.entity;
 
 import javax.persistence.Embeddable;
 

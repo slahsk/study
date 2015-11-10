@@ -1,4 +1,4 @@
-package com.sb.study.entity;
+package com.sb.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import com.sb.study.enumtype.DeliveryStatus;
+import com.sb.enumtype.DeliveryStatus;
 
 @Entity
 public class Delivery {
