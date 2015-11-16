@@ -1,4 +1,4 @@
-package springTest;
+package springTest.core.converter;
 
 /*
  * Copyright 2002-2012 the original author or authors.
