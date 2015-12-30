@@ -49,11 +49,11 @@
 				//css_rules[j].selectorText 같으면 rule_name
 				if(css_rules[j].selectorText && css_rules[j].selectorText.toLowerCase() == rule_name) {
 					if(delete_flag === true) {
-						if(sheet.removeRule) {//콜백 
+						if(sheet.removeRule) { 
 							sheet.removeRule(j); 
 						}
 						
-						if(sheet.deleteRule) { //콜백
+						if(sheet.deleteRule) {
 							sheet.deleteRule(j); 
 						}
 						return true;
@@ -330,7 +330,7 @@
 		_instance : function (index, container, settings) {  
 			// for plugins to store data in
 			this.data = { core : {} };
-			this.get_settings	= function () { return $.extend(true, {}, settings); };
+			this.get_settings	= function () { return $.extend(true, {}, settings); };//settings 복사
 			this._get_settings	= function () { return settings; };
 			this.get_index		= function () { return index; };
 			this.get_container	= function () { return container; };
@@ -910,7 +910,7 @@
 					return (obj.nextAll("li").size() > 0) ? obj.nextAll("li:eq(0)") : false; 
 				}
 
-				if(obj.hasClass("jstree-open")) { 
+				if(obj.hasClass("jstree-open")) { //obj 가 jstree-open 이면
 					return obj.find("li:eq(0)"); //첫번째
 				}else if(obj.nextAll("li").size() > 0) { 
 					return obj.nextAll("li:eq(0)"); //다음 노드
@@ -946,7 +946,7 @@
 					}
 					return obj;
 				}else {
-					// obj 부모중 .jstree 자식중 첫번째 li
+					// obj 상위 객체중 .jstree 자식중 첫번째 li 객체 선택
 					var o = obj.parentsUntil(".jstree","li:eq(0)"); return o.length ? o : false; 
 				}
 			},
@@ -1293,6 +1293,7 @@
 					}
 					
 					// 문자 이면 a element 에 href 속성 추가
+					//html_titles 값에 따라 $.fn.html 또는 text 함수 실행
 					if(typeof m == "string") { 
 						tmp.attr('href','#')[ s.html_titles ? "html" : "text" ](m); 
 					}else {
@@ -1483,6 +1484,12 @@
 				this.__callback({ "obj" : obj, "prev" : prev, "parent" : p });
 				return obj;
 			},
+			/*
+			o : 이동시킬 위치
+			r : 이동시킬 노드
+			pos : 포지션(앞,뒤)
+			cb : 콜백함수
+			*/
 			prepare_move : function (o, r, pos, cb, is_cb) {// 이동 준비?
 				var p = {};
 
@@ -1603,7 +1610,8 @@
 				var obj = prepared_move, 
 					ret = true, 
 					r = obj.r === -1 ? this.get_container() : obj.r;
-					
+				
+				//prepared_move 값이 검사
 				if(!obj || !obj.o || obj.or[0] === obj.o[0]) { 
 					return false; 
 				}
@@ -1612,7 +1620,7 @@
 					return false; 
 				}
 				
-				obj.o.each(function () { 
+				obj.o.each(function () {
 					if(r.parentsUntil(".jstree", "li").andSelf().index(this) !== -1) { 
 						ret = false; 
 						return false; // each 종료
@@ -1622,6 +1630,7 @@
 			},
 			move_node : function (obj, ref, position, is_copy, is_prepared, skip_check) {
 				// is_prepared : false prepare_move함수 실행
+				//이동 준비 여부 검사 하여 이동시킬 노드 생성
 				if(!is_prepared) { 
 					return this.prepare_move(obj, ref, position, function (p) {
 						this.move_node(p, false, false, is_copy, true, skip_check);
@@ -3785,7 +3794,10 @@
 		},
 		_fn : {
 			dnd_prepare : function () {
-				if(!r || !r.length) { return; }
+				if(!r || !r.length) { 
+					return; 
+				}
+				
 				this.data.dnd.off = r.offset();
 				if(this._get_settings().core.rtl) {
 					this.data.dnd.off.right = this.data.dnd.off.left + r.width();
