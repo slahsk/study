@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>jsTree v.1.0 - Demo</title>
+	<script type="text/javascript" src="../_lib/jquery.js"></script>
+	<script type="text/javascript" src="../_lib/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../_lib/jquery.hotkeys.js"></script>
+	<script type="text/javascript" src="../jquery.jstree.js"></script>
+	<script type="text/javascript" src="../_docs/syntax/!script.js"></script>
+	<link type="text/css" rel="stylesheet" href="../_docs/!style.css"/>
+</head>
+<body id="demo_body">
+
+<!-- JavaScript neccessary for the tree -->
+<script type="text/javascript">
+$(function () {
+	 $("#toggle_node").click(function () {
+		 //$("#demo1").jstree("create_node","#phtml_1","before",{ "data": "Hello World" });
+		 $("#demo1").jstree("move_node","#phtml_1","#phtml_5","first",true); //5번에 1복사
+	});
+
+	 
+	$("#demo1")
+	        .bind("open_node.jstree close_node.jstree", function (e) {
+					            
+	        	console.log(e)
+	        	
+	        }).
+	        bind("rename_node.jstree" , function(){
+	        	console.log("rename_node")
+	        })
+	        .jstree({ "plugins" : [ "themes", "html_data" ] });
+	
+	
+	
+/* ================================================================================================*/	
+	
+	$(document).bind("click.test2",function(){
+		
+		console.log("clickTest")
+		
+	})
+	
+	
+	
+	$("#demo2").jstree({ 
+		"ui" : { //선택시 색
+			"select_limit" : 2, //멀티 최대수
+			"select_multiple_modifier" : "alt", //멀티
+			"selected_parent_close" : "select_parent", //선택한거 닫으면 부모 선택
+			"initially_select" : [ "phtml2_5" ]    //로딩시 선택
+		},
+		"core" : { "initially_open" : [ "phtml2_1" ] },
+		"plugins" : [ "themes", "html_data", "ui" ]
+	});
+	
+	
+/* ================================================================================================*/	
+	$("#toggle_dots, #toggle_icons").click(function () { 
+		$("#demo3").jstree(this.value);
+	});
+	$("#set_theme1").click(function () { 
+		$("#demo3").jstree("set_theme","apple");
+	});
+	$("#set_theme2").click(function () { 
+		$("#demo3").jstree("set_theme","default");
+	});
+	$("#demo3").jstree({ 
+		"themes" : {
+			"theme" : "default",
+			"dots" : false,
+			"icons" : false
+		},
+		"plugins" : [ "themes", "html_data" ]
+	});
+	
+/* ================================================================================================*/
+	$("#create_1").click(function () { 
+		$("#demo4").jstree("create"); 
+	});
+	$("#create_2").click(function () { 
+		$("#demo4").jstree("create","#phtml4_1","first","Enter a new name"); 
+	});
+	$("#create_3").click(function () { 
+		$("#demo4").jstree("create",-1,false,"No rename",false,true); 
+	});
+	$("#demo4").jstree({ 
+		"ui" : {
+			"initially_select" : [ "phtml4_2" ]
+		},
+		"core" : { "initially_open" : [ "phtml4_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+	
+	
+	$("#remove_1").click(function () { 
+		$("#demo5").jstree("remove"); 
+	});
+	$("#remove_2").click(function () { 
+		$("#demo5").jstree("remove","#rhtml5_1"); 
+	});
+	$("#demo5").jstree({ 
+		"ui" : {
+			"initially_select" : [ "rhtml5_2" ]
+		},
+		"core" : { "initially_open" : [ "rhtml5_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+	
+	
+	$("#rename_1").click(function () { 
+		$("#demo6").jstree("rename"); 
+	});
+	$("#rename_2").click(function () { 
+		$("#demo6").jstree("rename","#shtml6_1"); 
+	});
+	$("#demo6").jstree({ 
+		"ui" : {
+			"initially_select" : [ "shtml6_2" ]
+		},
+		"core" : { "initially_open" : [ "shtml6_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+	
+	
+	$("#move_1").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_4","#thtml7_1"); //2 -> 3 
+	});
+	$("#move_2").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_4","#thtml7_1", "before"); 
+	});
+	$("#move_3").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_1","#thtml7_4"); 
+	});
+	$("#demo7").jstree({ 
+		"crrm" : {
+			"move" : {
+				"default_position" : "first",
+				"check_move" : function (m) { 
+					return (m.o[0].id === "thtml7_1") ? false : true;  
+					}
+			}
+		},
+		"ui" : {
+			"initially_select" : [ "thtml7_2" ]
+		},
+		"core" : { "initially_open" : [ "thtml7_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+	
+	
+	/* ================================================================================================*/    
+	$("#demo8").jstree({ 
+		"json_data" : {
+			"data" : [
+				{ 
+					"data" : "A node", 
+					"metadata" : { id : 23 },
+					"children" : [ "Child 1", "A Child 2" ]
+				},
+				{ 
+					"attr" : { "id" : "li.node.id1" }, 
+					"data" : { 
+						"title" : "Long format demo", 
+						"attr" : { "href" : "#" } 
+					} 
+				}
+			]
+		},
+		"plugins" : [ "themes", "json_data", "ui" ]
+	}).bind("select_node.jstree", function (e, data) { 
+		alert(jQuery.data(data.rslt.obj[0], "id")); 
+	});	    
+});
+	    
+
+
+
+
+
+</script>
+
+<input type="button" class="button" value="toggle_node" id="toggle_node" style="clear:both;" />
+
+<div id="demo1" class="demo">
+	<ul>
+		<li id="phtml_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="phtml_2">
+					<a href="#">Child node 1</a>
+					<ul>
+						<li id="phtml_7">
+							<a href="#">Child node 7</a>
+						</li>
+					</ul>
+				</li>
+				<li id="phtml_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="phtml_4">
+			<a href="#">Root node 2</a>
+			<ul>
+				<li id="phtml_5">
+					<a href="#">Child node 4</a>
+				</li>
+				<li id="phtml_6">
+					<a href="#">Child node 5</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+<div id="demo2" class="demo">
+	<ul>
+		<li id="phtml2_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="phtml2_2">
+					<a href="#">Child node 1</a>
+					<ul>
+						<li id="phtml2_7">
+							<a href="#">Child node 7</a>
+						</li>
+					</ul>
+				</li>
+				<li id="phtml2_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="phtml2_4">
+			<a href="#">Root node 2</a>
+			<ul>
+				<li id="phtml2_5">
+					<a href="#">Child node 4</a>
+				</li>
+				<li id="phtml2_6">
+					<a href="#">Child node 5</a>
+					
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+<input type="button" value="TEST" id = "test" class="test2"/>
+
+<br />
+<input type="button" class="button" value="toggle_dots" id="toggle_dots" style="float:left;" />
+<input type="button" class="button" value="toggle_icons" id="toggle_icons" style="float:left;" />
+<input type="button" class="button" value="set_theme1" id="set_theme1" style="float:left;" />
+<input type="button" class="button" value="set_theme2" id="set_theme2" style="" />
+<div id="demo3" class="demo">
+	<ul>
+		<li id="phtml3_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="phtml3_2">
+					<a href="#">Child node 1</a>
+				</li>
+				<li id="phtml3_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="phtml3_4">
+			<a href="#">Root node 2</a>
+		</li>
+	</ul>
+</div>
+
+
+
+<input type="button" class="button" value="create_1" id="create_1" style="float:left;" />
+<input type="button" class="button" value="create_2" id="create_2" style="float:left;" />
+<input type="button" class="button" value="create_3" id="create_3" style="" />
+<div id="demo4" class="demo">
+	<ul>
+		<li id="phtml4_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="phtml4_2">
+					<a href="#">Child node 1</a>
+				</li>
+				<li id="phtml4_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="phtml4_4">
+			<a href="#">Root node 2</a>
+		</li>
+	</ul>
+</div>
+
+<input type="button" class="button" value="remove_1" id="remove_1" style="float:left;" />
+<input type="button" class="button" value="remove_2" id="remove_2" style="" />
+<div id="demo5" class="demo">
+	<ul>
+		<li id="rhtml5_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="rhtml5_2">
+					<a href="#">Child node 1</a>
+				</li>
+				<li id="rhtml5_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="rhtml5_4">
+			<a href="#">Root node 2</a>
+		</li>
+	</ul>
+</div>
+
+<h3>Renaming nodes</h3>
+<input type="button" class="button" value="rename_1" id="rename_1" style="float:left;" />
+<input type="button" class="button" value="rename_2" id="rename_2" style="" />
+<div id="demo6" class="demo">
+	<ul>
+		<li id="shtml6_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="shtml6_2">
+					<a href="#">Child node 1</a>
+				</li>
+				<li id="shtml6_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="shtml6_4">
+			<a href="#">Root node 2</a>
+		</li>
+	</ul>
+</div>
+
+
+<h3>Moving nodes</h3>
+<input type="button" class="button" value="move_1" id="move_1" style="float:left;" />
+<input type="button" class="button" value="move_2" id="move_2" style="float:left;" />
+<input type="button" class="button" value="move_3" id="move_3" style="" />
+<div id="demo7" class="demo">
+	<ul>
+		<li id="thtml7_1">
+			<a href="#">Root node 1</a>
+			<ul>
+				<li id="thtml7_2">
+					<a href="#">Child node 1</a>
+				</li>
+				<li id="thtml7_3">
+					<a href="#">Child node 2</a>
+				</li>
+			</ul>
+		</li>
+		<li id="thtml7_4">
+			<a href="#">Root node 2</a>
+		</li>
+	</ul>
+</div>
+
+<div id="demo8" class="demo">
+</div>
+</body>
+</html>
