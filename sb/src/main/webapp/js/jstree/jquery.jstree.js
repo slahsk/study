@@ -574,10 +574,14 @@
 				this.data.core.li_height = this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() || 18;
 				
 				// element 에 이벤트 추가
-				this.get_container().delegate("li > ins", "click.jstree", $.proxy(function (event) {
-							var trgt = $(event.target);
-							this.toggle_node(trgt);// close open 변경
-						}, this))
+				this.get_container().delegate(
+					"li > ins", 
+					"click.jstree", 
+					$.proxy(function (event) {
+						var trgt = $(event.target);
+						this.toggle_node(trgt);// close open 변경
+					},this)
+					)
 					.bind("mousedown.jstree", $.proxy(function () { //마우스 클릭할때마다 발생
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
 						}, this))
@@ -1185,10 +1189,11 @@
 				// li element 이면 obj 에 포함 시키고 아니면 li element 찾기
 				obj = obj.is("li") ? obj.find("li").andSelf() : obj.find("li");
 				
+				//li last 객체 새로 정의 하고 jstree-leat 클레스를 jstree-closed 변경
 				obj.removeClass("jstree-last")
-					.filter("li:last-child")
-					.addClass("jstree-last")// 마지막 자식에게 추가
-					.end()// 스텍 상위로 obj
+					.filter("li:last-child")//li 객체중 마지막 객체 선택
+					.addClass("jstree-last")// jstree-last 추가
+					.end()// 상위 객체로 이동(filter 전)
 					.filter(":has(li)") // li 객체를 가지고 있고
 					.not(".jstree-open")// jstree-open 아닌 객체
 					.removeClass("jstree-leaf") // jstree-leaf 삭제
@@ -1390,8 +1395,8 @@
 					tmp = -1; 
 				}
 				
-				//tep -1 이면 clean 은 전체적으로 실행 
-				this.clean_node(tmp);
+				
+				this.clean_node(tmp);//last_node 새로 정의
 				this.__callback({ "obj" : d, "parent" : tmp });
 				
 				if(callback) { 
@@ -1468,7 +1473,7 @@
 				
 				obj = obj.detach(); // 삭제
 				
-				// 부모가 있으면 자식중 ul li 없으면 leaf 로 변경(자식이 모두 삭제 되어서 하위 노드가 된다.)
+				// li 객체수가 0 이면 jstree-open, jstree-closed 클레스 jstree-leaf 변경
 				if(p !== -1 && p.find("> ul > li").length === 0) {
 					p.removeClass("jstree-open jstree-closed").addClass("jstree-leaf");
 				}
@@ -1492,7 +1497,11 @@
 				p.p = (typeof pos === "undefined" || pos === false) ? "last" : pos; 
 				
 				// prepared_move변수하고 새로 생성된 p값하고 비교 해서 같으면 콜백하수 실행후 리턴
-				if(!is_cb && prepared_move.o && prepared_move.o[0] === p.o[0] && prepared_move.r[0] === p.r[0] && prepared_move.p === p.p) {
+				if(!is_cb 
+				&& prepared_move.o 
+				&& prepared_move.o[0] === p.o[0] 
+				&& prepared_move.r[0] === p.r[0]
+				&& prepared_move.p === p.p) {
 					this.__callback(prepared_move);
 					
 					if(cb) {// 콜백 함수 실행
