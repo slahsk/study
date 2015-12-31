@@ -1485,28 +1485,28 @@
 				return obj;
 			},
 			/*
-			o : 이동시킬 위치
-			r : 이동시킬 노드
+			o : 이동시킬 노드 id
+			r : 이동시킬 목표 노드 id
 			pos : 포지션(앞,뒤)
 			cb : 콜백함수
 			*/
 			prepare_move : function (o, r, pos, cb, is_cb) {// 이동 준비?
 				var p = {};
 
-				p.ot = $.jstree._reference(o) || this; // obj instance 가져오기
-				p.o = p.ot._get_node(o); // obj li 객체
+				p.ot = $.jstree._reference(o) || this; //jstree 객체 가져오기
+				p.o = p.ot._get_node(o); // obj li(node) jquery seleter 객체
 				
-				// ref li 객체(이동 목적 객체)
+				// r 값이 있으면 node jquery 객체 가져오기
 				p.r = r === - 1 ? -1 : this._get_node(r); 
 				
 				// pos 값이 없거나 false 이면 last
 				// TODO: move to a setting
 				p.p = (typeof pos === "undefined" || pos === false) ? "last" : pos; 
 				
-				// prepared_move변수하고 새로 생성된 p값하고 비교 해서 같으면 콜백하수 실행후 리턴
+				// prepared_move 객체하고 비교하여 같으면 
 				if(!is_cb 
 				&& prepared_move.o 
-				&& prepared_move.o[0] === p.o[0] 
+				&& prepared_move.o[0] === p.o[0]  
 				&& prepared_move.r[0] === p.r[0]
 				&& prepared_move.p === p.p) {
 					this.__callback(prepared_move);
@@ -1517,7 +1517,7 @@
 					return;
 				}
 				
-				//o 의 instance 가져오기
+				//jquery 객체에서 -> jstree 객체로 가져오기
 				p.ot = $.jstree._reference(p.o) || this; 
 				
 				// ref instance 가져오기
@@ -1525,7 +1525,7 @@
 				p.rt = $.jstree._reference(p.r) || this; 
 				
 				/*
-				 * ref li객체가 없으면 p.cr : -1 p.cp : 삽입될 index 번호
+				 * 이동시킬 목표 node 없으면
 				 */
 				if(p.r === -1 || !p.r) {
 					p.cr = -1;
@@ -1545,7 +1545,7 @@
 					}
 				}
 				else { // ref li 객체가 있으면
-					// before after 이면 fasle
+					// before after 아니면서 로드가 안되어 있으면 load_node 함수 실행후 콜백으로 prepare_move 함수 다시 실행
 					if(!/^(before|after)$/.test(p.p) && !this._is_loaded(p.r)) {
 						return this.load_node(p.r, function () { this.prepare_move(o, r, pos, cb, true); });
 					}
@@ -1573,7 +1573,7 @@
 					}
 				}
 				
-				// p.cr : ref li 객체
+				// p.cr(이동 목적 node) 객체가 없으면 이동목표 node 의 root 객체 가져오기
 				p.np = p.cr == -1 ? p.rt.get_container() : p.cr;
 
 				// 부모객체 가져오기 없으면 -1
