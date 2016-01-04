@@ -1603,7 +1603,8 @@
 				// p.o.index() < p.cp) { p.cp--; }
 				
 				// 자식 노드 에서 찾기
-				//p.np : 목표 노드
+				//p.np : 목표 노드 부모
+				//p.or : 이동 목표 node 
 				p.or = p.np.find(" > ul > li:nth-child(" + (p.cp + 1) + ")");
 				
 				prepared_move = p;
@@ -1617,19 +1618,26 @@
 			},
 			check_move : function () {
 				var obj = prepared_move, 
-					ret = true, 
+					ret = true,
+					//목표 node 가 없으면 jstree 객체 가져오기
 					r = obj.r === -1 ? this.get_container() : obj.r;
 				
-				//prepared_move 값이 검사
-				if(!obj || !obj.o || obj.or[0] === obj.o[0]) { 
+				//prepared_move 값이 같
+				if(!obj 
+					|| !obj.o 
+					|| obj.or[0] === obj.o[0]) {	//이동 node 하고 이동 목표 node(position 적용) 하고 같으면
 					return false; 
 				}
 				
-				if(obj.op && obj.np && obj.op[0] === obj.np[0] && obj.cp - 1 === obj.o.index()) { 
+				if(obj.op 
+					&& obj.np 
+					&& obj.op[0] === obj.np[0]	//이동 node 하고 이동 목표 node 부모 하고 같으면
+					&& obj.cp - 1 === obj.o.index()) { // position 위치 인덱스 하고 이동 node 인덱스가 같으면
 					return false; 
 				}
 				
 				obj.o.each(function () {
+					////이동 node 중에서 목표 node 중에 중복 되는  node 가 있으면
 					if(r.parentsUntil(".jstree", "li").andSelf().index(this) !== -1) { 
 						ret = false; 
 						return false; // each 종료
