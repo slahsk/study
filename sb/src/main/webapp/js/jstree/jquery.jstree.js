@@ -1485,8 +1485,8 @@
 				return obj;
 			},
 			/*
-			o : 이동시킬 노드 id
-			r : 이동시킬 목표 노드 id
+			o : 이동 노드 id
+			r : 목표 노드 id
 			pos : 포지션(앞,뒤)
 			cb : 콜백함수
 			*/
@@ -1503,7 +1503,7 @@
 				// TODO: move to a setting
 				p.p = (typeof pos === "undefined" || pos === false) ? "last" : pos; 
 				
-				// prepared_move 객체하고 비교하여 같으면 
+				// prepared_move 객체하고 비교하여 같으면  리턴
 				if(!is_cb 
 				&& prepared_move.o 
 				&& prepared_move.o[0] === p.o[0]  
@@ -1551,7 +1551,7 @@
 					}
 					switch(p.p) {
 						case "before":
-							p.cp = p.r.index(); // ref li 객체의 index 가져오기 ref instance 에서 li객체 찾기
+							p.cp = p.r.index(); // ref li 객체의 index 가져오기 
 							break;
 						case "after":
 							p.cp = p.r.index() + 1;
@@ -1559,8 +1559,8 @@
 							break;
 						case "inside":
 						case "first":
-							p.cp = 0;
-							p.cr = p.r;
+							p.cp = 0; //index
+							p.cr = p.r; // 목표 node li jquery 객체
 							break;
 						case "last":
 							p.cp = p.r.find(" > ul > li").length; 
@@ -1573,22 +1573,29 @@
 					}
 				}
 				
-				// p.cr(이동 목적 node) 객체가 없으면 이동목표 node 의 root 객체 가져오기
+				// p.cr(목표 node) 객체가 없으면 (이동 node)root jquery객체 가져오기
 				p.np = p.cr == -1 ? p.rt.get_container() : p.cr;
 
-				// 부모객체 가져오기 없으면 -1
-				// p.o :첫번째 객체
+				// root 개체에서 이동 node 부모 node jquery객체 가져오기
+				// p.o : 이동 node
+				// p.ot : jstree root 객체
 				p.op = p.ot._get_parent(p.o);
 				
-				// 첫번째 객체의 위치
+				// 이동 node index get
 				p.cop = p.o.index();
 				
-				// p.op 에 값 set
+				//이동 node 의 부모 node 없으면 jstree 객체 가져오기
 				if(p.op === -1) { 
+					// p.op 에 값 set
 					p.op = p.ot ? p.ot.get_container() : this.get_container(); 
 				}
 				
-				if(!/^(before|after)$/.test(p.p) && p.op && p.np && p.op[0] === p.np[0] && p.o.index() < p.cp) { 
+				
+				if(!/^(before|after)$/.test(p.p) //position 이 before, after 아니면 
+						&& p.op	// 이동 node 의 부모 node
+						&& p.np	// 목표  node
+						&& p.op[0] === p.np[0] 
+						&& p.o.index() < p.cp) { 
 					p.cp++; 
 				}
 				
@@ -1596,7 +1603,9 @@
 				// p.o.index() < p.cp) { p.cp--; }
 				
 				// 자식 노드 에서 찾기
+				//p.np : 목표 노드
 				p.or = p.np.find(" > ul > li:nth-child(" + (p.cp + 1) + ")");
+				
 				prepared_move = p;
 				
 				this.__callback(prepared_move);
@@ -1647,14 +1656,13 @@
 
 				this.__rollback();
 				var o = false;
+				
+				//깊은 복사
 				if(is_copy) {
-					/*
-					 * is_prepared false 라면 obj 는 prepare_move 실행후 만들어지는 객체이다
-					 * 첫번째 객체 복사
-					 */
+					//이동 node 복사
 					o = obj.o.clone(true);
 					
-					// id에 copy_ prefix 붙이기
+					// 이동 node 의 id 있는 node 하고 자기 자신 포함해서 id에 변경
 					o.find("*[id]").andSelf().each(function () {
 						if(this.id) { 
 							this.id = "copy_" + this.id; 
@@ -1667,30 +1675,33 @@
 				if(obj.or.length) { 
 					obj.or.before(o); 
 				}else { 
-					// obj.np 복사해서 붙일 대상
+					// obj.np 목표 node 의 ul 객체가 없으면 true
+					//ul 객체 추가 (마지막 자식 node 는 ul 객체가 없기 에 추가 해준다)
 					if(!obj.np.children("ul").length) { 
-						/*
-						 * ul 객체 추가 가장 하위 객체는 ul이 없다
-						 */
 						$("<ul />").appendTo(obj.np); 
 					}
 					
 					// ul 에 추가
+					// 목표 node 의  ul 에 하위로 이동 node 추가
 					obj.np.children("ul:eq(0)").append(o); 
 				}
 
 				try { 
-					obj.ot.clean_node(obj.op);
-					obj.rt.clean_node(obj.np);
+					obj.ot.clean_node(obj.op); // 이동 node 의 jstree 객체 노드 정리
+					obj.rt.clean_node(obj.np); // 목표 node 의 jstree 객체 노드 정리
+					
+					//이동 node 의 자식 node 가 없으면 ul 요소 제거 및 jstree-leaf 로 class 변경
 					if(!obj.op.find("> ul > li").length) {
 						obj.op.removeClass("jstree-open jstree-closed").addClass("jstree-leaf").children("ul").remove();
 					}
 				} catch (e) { }
-
+				
+				//복사이면
 				if(is_copy) { 
 					prepared_move.cy = true;
 					prepared_move.oc = o; 
 				}
+				
 				this.__callback(prepared_move);
 				return prepared_move;
 			},

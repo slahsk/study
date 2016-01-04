@@ -124,32 +124,6 @@ $(function () {
 	});
 	
 	
-	$("#move_1").click(function () { 
-		$("#demo7").jstree("move_node","#thtml7_4","#thtml7_1"); //2 -> 3 
-	});
-	$("#move_2").click(function () { 
-		$("#demo7").jstree("move_node","#thtml7_4","#thtml7_1", "before"); 
-	});
-	$("#move_3").click(function () { 
-		$("#demo7").jstree("move_node","#thtml7_1","#thtml7_4"); 
-	});
-	$("#demo7").jstree({ 
-		"crrm" : {
-			"move" : {
-				"default_position" : "first",
-				"check_move" : function (m) { 
-					return (m.o[0].id === "thtml7_1") ? false : true;  
-					}
-			}
-		},
-		"ui" : {
-			"initially_select" : [ "thtml7_2" ]
-		},
-		"core" : { "initially_open" : [ "thtml7_1" ] },
-		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
-	});
-	
-	
 	/* ================================================================================================*/    
 	$("#demo8").jstree({ 
 		"json_data" : {
@@ -359,9 +333,55 @@ $(function () {
 		</li>
 		<li id="thtml7_4">
 			<a href="#">Root node 2</a>
+			<ul>
+				<li id="thtml7_5">
+					<ul>
+						<li id= "thtml7_7">
+							<a href="#">Child node 2_1_1</a>
+						</li>
+						<li id = "thtml7_8">
+							<a href="#">Child node 2_1_2</a>
+						</li>
+					</ul>
+					<a href="#">Child node 2_1</a>
+				</li>
+				<li id="thtml7_6">
+					<a href="#">Child node 2_2</a>
+				</li>
+			</ul>
 		</li>
 	</ul>
 </div>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$("#move_1").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_5","#thtml7_2"); //2번째가 목표 node , 3번째가 이동시킬 node 
+	});
+	$("#move_2").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_4","#thtml7_1", "before"); 
+	});
+	$("#move_3").click(function () { 
+		$("#demo7").jstree("move_node","#thtml7_1","#thtml7_4"); 
+	});
+	$("#demo7").jstree({ 
+		"crrm" : {
+			"move" : {
+				"default_position" : "first",
+				"check_move" : function (m) { 
+					return (m.o[0].id === "thtml7_1") ? false : true;  
+					}
+			}
+		},
+		"ui" : {
+			"initially_select" : [ "thtml7_2" ]
+		},
+		"core" : { "initially_open" : [ "thtml7_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+});
+</script>
+
 
 <div id="demo8" class="demo">
 </div>
