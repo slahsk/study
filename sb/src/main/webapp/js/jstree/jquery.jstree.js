@@ -181,7 +181,14 @@
 				 * methodValue 값이 undefinded 아니며 함수이름이 is_ 로 시작하가나 methodValue
 				 * 값이 true,false 아닐때 returnValue에 returnValue값 할당 하고
 				 */
-					if(typeof methodValue !== "undefined" && (settings.indexOf("is_") === 0 || (methodValue !== true && methodValue !== false))) { returnValue = returnValue; return false; }
+					
+					if(typeof methodValue !== "undefined" 
+						&& (settings.indexOf("is_") === 0 
+						|| (methodValue !== true && methodValue !== false))) {
+						
+						returnValue = methodValue; 
+						return false; 
+					}
 			});
 		}else {// setting
 			this.each(function() {
@@ -560,7 +567,7 @@
 			 * 참조하고 있다. 런타임에는 $.jstree._fn 함수에서 참조해서 사용한다.
 			 */
 			init	: function () { 
-				
+				console.log("core.init")
 				this.set_focus(); 
 				
 				// 기본값 false
@@ -578,6 +585,7 @@
 					"li > ins", 
 					"click.jstree", 
 					$.proxy(function (event) {
+						console.log("click");
 						var trgt = $(event.target);
 						this.toggle_node(trgt);// close open 변경
 					},this)
@@ -1031,13 +1039,13 @@
 			},
 			// open/close
 			open_node	: function (obj, callback, skip_animation) {
-				// li 객체 가져오기
-				obj = this._get_node(obj);
+				obj = this._get_node(obj); // node jquery 객체 가져오기
+				
 				if(!obj.length) { 
 					return false; 
 				}
 				
-				// obj 에 jstree-closed 아니고 callback 있으면 실행 후 리턴
+				//closed 되어 있는 노드가 아니라면 콜백함수 실행후 리턴
 				if(!obj.hasClass("jstree-closed")) { 
 					if(callback) { 
 						callback.call(); 
@@ -1065,16 +1073,29 @@
 						// obj(li) 객체 자식중 ul 태그 display none
 						obj.children("ul").css("display","none"); 
 					}
-					obj.removeClass("jstree-closed").addClass("jstree-open").children("a").removeClass("jstree-loading");
+					
+					//closed 제거후 open 추가 후 자식 a element 에 loading 제거
+					obj.removeClass("jstree-closed") 
+						.addClass("jstree-open")
+						.children("a")
+						.removeClass("jstree-loading");
 					
 					// animation 효과
 					if(s) { 
-						obj.children("ul").stop(true, true).slideDown(s, function () { this.style.display = ""; t.after_open(obj); }); 
+						
+						obj.children("ul")
+							.stop(true, true)
+							.slideDown(s, function () { 
+								this.style.display = ""; 
+								t.after_open(obj); 
+							}); 
+						
 					}else { 
 						t.after_open(obj); // skip 또는 ie6 에서 사용
 					}
 					
 					this.__callback({ "obj" : obj });
+					
 					if(callback) { 
 						callback.call(); 
 					}
@@ -1113,6 +1134,8 @@
 				this.__callback({ "obj" : obj });
 			},
 			toggle_node	: function (obj) {
+				console.log("core.toggle_node")
+				console.log($.jstree._fn.toggle_node === this.toggle_node)
 				// this : instance
 				// obj : li element
 				obj = this._get_node(obj);
