@@ -1,0 +1,122 @@
+<!DOCTYPE>
+<html>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<head>
+		<title>jsTree v.1.0 - CORE</title>
+		<script type="text/javascript" src="../../_lib/jquery.js"></script>
+		<script type="text/javascript" src="../../_lib/jquery.cookie.js"></script>
+		<script type="text/javascript" src="../../_lib/jquery.hotkeys.js"></script>
+		
+		<script type="text/javascript" src="../../jquery.jstree.js"></script>
+		<script src="../../../sinon-1.17.2.js"></script>
+		<script src="../../../qunit-1.19.0.js"></script>
+		<link rel="stylesheet" href="../../../qunit-1.19.0.css">
+		
+		
+		<script type="text/javascript">
+		
+		$(document).ready(function(){
+			
+			$("#demo").jstree({ 
+				"core" : { "initially_open" : [ "thtml1_1" ] },
+			});
+			
+			module("core",{
+				setup : function(){
+					this.jt = $("#demo");
+				}
+			});
+			test("set_focusTest",function(){
+				this.jt.jstree("set_focus");
+				ok(this.jt.jstree("is_focused"));
+			});
+			
+			test("unset_focusTest",function(){
+				this.jt.jstree("set_focus");
+				this.jt.jstree("unset_focus");
+				notOk(this.jt.jstree("is_focused"));
+			});
+			 	
+			test("lockTest",function(){
+				this.jt.jstree("lock");
+				ok(this.jt.jstree("is_locked"));
+				ok(this.jt.children("ul").hasClass("jstree-locked"));
+			});
+			
+			test("unlockTest",function(){
+				this.jt.jstree("lock");
+				this.jt.jstree("unlock");
+				notOk(this.jt.jstree("is_locked"));
+				notOk(this.jt.children("ul").hasClass("jstree-locked"));
+			});
+			
+			test("get_pathTest(ID)",function(){
+				var path = this.jt.jstree("get_path","#thtml2_1_2",true);
+				equal(path.length,3);
+				equal(path[2],"thtml2_1_2")
+			});
+			
+			test("get_pathTest(TEXT)",function(){
+				var path = this.jt.jstree("get_path","#thtml2_1_2",false);
+				equal(path.length,3);
+				equal(path[2],"Child node 2_1_2")
+			}); 
+			
+		/* 	test("destroyTest",function(){
+				var obj = this.jt.clone(true);
+				obj.jstree("destroy");
+				notOk(obj.hasClass("jstree"));
+			});  */
+			
+			test("open_nodeTest",function(){
+				this.jt.jstree("open_node","#thtml1");
+				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
+				
+			}); 
+		
+		});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture">
+		
+		</div>
+			<div id="demo" class="demo">
+				<ul>
+					<li id="thtml1">
+						<a href="#">Root node 1</a>
+						<ul>
+							<li id="thtml1_1">
+								<a href="#">Child node 1_1</a>
+							</li>
+							<li id="thtml1_2">
+								<a href="#">Child node 1_2</a>
+							</li>
+						</ul>
+					</li>
+					<li id="thtml7_2">
+						<a href="#">Root node 2</a>
+						<ul>
+							<li id="thtml2_1">
+								<ul>
+									<li id= "thtml2_1_1">
+										<a href="#">Child node 2_1_1</a>
+									</li>
+									<li id = "thtml2_1_2">
+										<a href="#">Child node 2_1_2</a>
+									</li>
+								</ul>
+								<a href="#">Child node 2_1</a>
+							</li>
+							<li id="thtml2_2">
+								<a href="#">Child node 2_2</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			
+		
+	</body>
+</html>
