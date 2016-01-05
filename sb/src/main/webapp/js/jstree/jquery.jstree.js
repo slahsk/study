@@ -1098,7 +1098,7 @@
 					
 					if(callback) { 
 						callback.call(); 
-					}
+					} 
 				}
 			},
 			after_open	: function (obj) { 
