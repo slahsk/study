@@ -308,7 +308,9 @@
 		defaults : {
 			plugins : []
 		},
-		_focused : function () { return instances[focused_instance] || null; },
+		_focused : function () { 
+			return instances[focused_instance] || null; 
+		},
 		// needle 가 instances id라면 변수에서 바로 가져오기
 		// element id 라면 그 객체의 data 에 있는 instances id 가져와서 조회후 리턴
 		_reference : function (needle) { 
@@ -336,6 +338,7 @@
 		 */
 		_instance : function (index, container, settings) {  
 			// for plugins to store data in
+			
 			this.data = { core : {} };
 			this.get_settings	= function () { return $.extend(true, {}, settings); };//settings 복사
 			this._get_settings	= function () { return settings; };
@@ -352,6 +355,7 @@
 		 */
 		_fn : { },
 		plugin : function (pname, pdata) {// jstree 확장은 plugin 함수를 통해서 _fn에 함수에 추가
+			
 			pdata = $.extend({}, {
 				__init		: $.noop, // function(){}
 				__destroy	: $.noop,
@@ -369,9 +373,7 @@
 			$.each(pdata._fn, function (i, val) {
 				val.plugin		= pname;
 				val.old			= $.jstree._fn[i]; // 같은 이름의 함수가 있으면 old 에 추가
-				/*
-				 * jstree 에서 사용 되는 함수는 모두 이함수를 통해서 실행 된다. 클로저 이며 val이 함수 이름 이다.
-				 */
+				//plugin 모든 함수들은 $.jstree._fn 에 할당
 				$.jstree._fn[i] = function () {
 					var rslt,
 						func = val,// 함수
@@ -383,7 +385,9 @@
 					 * data.core.locked 가 true 이고 메소드 이름이 unlock,is_locked 아니면
 					 * return
 					 */ 
-					if(this.data.core.locked === true && i !== "unlock" && i !== "is_locked") { return; }
+					if(this.data.core.locked === true && i !== "unlock" && i !== "is_locked") { 
+						return; 
+					}
 
 					// Check if function belongs to the included plugins of this
 					// instance
@@ -408,8 +412,7 @@
 					 */
 					if(i.indexOf("_") === 0) {
 						rslt = func.apply(this, args);
-					}
-					else {
+					}else {
 						/*
 						 * element 에 before.jstree 이름의 이벤트 실행 func : 메소드 이름,
 						 * inst : element 객체, args : argument, func.plugin :
@@ -1028,12 +1031,15 @@
 				return obj && obj !== -1 && obj.hasClass("jstree-leaf"); 
 			},
 			correct_state	: function (obj) {
-				obj = this._get_node(obj); // li
-				if(!obj || obj === -1) { // li 객체 없으면 리턴
+				obj = this._get_node(obj); // node 조회
+				
+				//node 없으면
+				if(!obj || obj === -1) {
 					return false; 
 				}
 				
-				// 하위 노드로 변경
+				// closed,open class 제거 및 ul 요소 삭제 하여
+				// 마지막 node 객체로 변경
 				obj.removeClass("jstree-closed jstree-open").addClass("jstree-leaf").children("ul").remove();
 				this.__callback({ "obj" : obj });
 			},
@@ -1110,13 +1116,17 @@
 				var s = skip_animation || is_ie6 ? 0 : this._get_settings().core.animation,
 					t = this;
 
-				// obj 없거나 jstree-open 아니라면 리턴
-				if(!obj.length || !obj.hasClass("jstree-open")) { return false; }
+				// node 없거나 open되어 있는 node가 아니라면 리턴
+				if(!obj.length || !obj.hasClass("jstree-open")) { 
+					return false; 
+				}
 				
 				// 에니메이션 효과가 있으면 ul 객체 style 변경
-				if(s) { obj.children("ul").attr("style","display:block !important"); }
+				if(s) { 
+					obj.children("ul").attr("style","display:block !important"); 
+				}
 				
-				// obj jstree-open제거후 jstree-closed 변경
+				// node 에 jstree-open제거후 jstree-closed 변경
 				obj.removeClass("jstree-open").addClass("jstree-closed");
 				
 				if(s) { 
@@ -1134,8 +1144,6 @@
 				this.__callback({ "obj" : obj });
 			},
 			toggle_node	: function (obj) {
-				console.log("core.toggle_node")
-				console.log($.jstree._fn.toggle_node === this.toggle_node)
 				// this : instance
 				// obj : li element
 				obj = this._get_node(obj);
@@ -1153,7 +1161,7 @@
 			open_all	: function (obj, do_animation, original_obj) {
 				obj = obj ? this._get_node(obj) : -1;
 				
-				// obj 가 없으면 ul 객체 가져오기
+				//node 가 없으면 root 에서 ul 요소 가져오기
 				if(!obj || obj === -1) { 
 					obj = this.get_container_ul(); 
 				}
@@ -1446,7 +1454,11 @@
 					obj.children("INS").remove(); // ins(아이콘) 제거
 					return obj.html(); // html 리턴
 				}else {
-					obj = obj.contents().filter(function() { return this.nodeType == 3; })[0]; // a태그에서
+					obj = obj.contents().filter(
+							function() { 
+								return this.nodeType == 3; 
+							}
+						)[0]; // a태그에서
 					return obj.nodeValue;
 				}
 			},
@@ -1475,7 +1487,9 @@
 				this.__rollback();
 
 				// set_text 실행
-				if(obj && obj.length && this.set_text.apply(this, Array.prototype.slice.call(arguments))) { 
+				if(obj 
+					&& obj.length 
+					&& this.set_text.apply(this, Array.prototype.slice.call(arguments))) {
 					this.__callback({ "obj" : obj, "name" : val }); 
 				}
 			},

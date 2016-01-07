@@ -17,16 +17,24 @@
 		
 		$(document).ready(function(){
 			
+			
+			
 			$("#demo").jstree({ 
 				"core" : { "initially_open" : [ "thtml1_1" ] },
 			});
 			
 			module("core",{
-				setup : function(){
+				beforeEach : function(){
 					this.jt = $("#demo");
+					this.node = $("<li/>").append($("<ul/>"));
+				},
+				afterEach : function(){
+					
 				}
+				
 			});
 			test("set_focusTest",function(){
+				//sinon.stub($.jstree._fn,"is_focused").returns(true);
 				this.jt.jstree("set_focus");
 				ok(this.jt.jstree("is_focused"));
 			});
@@ -62,27 +70,137 @@
 				equal(path[2],"Child node 2_1_2")
 			}); 
 			
-		/* 	test("destroyTest",function(){
-				var obj = this.jt.clone(true);
-				obj.jstree("destroy");
-				notOk(obj.hasClass("jstree"));
-			});  */
-			 
+			test("get_textTest",function(){
+				var text = this.jt.jstree("get_text","#thtml2_1_1");
+				equal(text,"Child node 2_1_1");
+			});
+			
+			test("set_textTest",function(){
+				var beforeText = this.jt.jstree("get_text","#thtml2_1_2");
+				
+				
+				this.jt.jstree("set_text","#thtml2_1_2","newText");
+				var afterText = this.jt.jstree("get_text","#thtml2_1_2");
+				
+				
+				equal(beforeText,"Child node 2_1_2");
+				equal(afterText,"newText");
+			})
+			
+			test("correct_stateTest",function(){
+				
+				var obj = this.node.addClass("jstree-closed");
+				
+				sinon.stub($.jstree._fn, "_get_node").withArgs("#thtml2_1_2").returns(obj);
+				this.jt.jstree("correct_state","#thtml2_1_2");
+				ok(obj.hasClass("jstree-leaf"));
+				equal(obj.find("ul").length,0);
+				
+			});
+			
+			module("clean_node",{
+				beforeEach : function(){
+					this.jt = $("#demo");
+					
+					var node = $("<li/>").append($("<a/>").html("node"));
+					var ul = $("<ul/>")
+						.append(node.clone(true).addClass("jstree-open"))
+						.append(node.clone(true).addClass("jstree-cloased"))
+						.append(node.clone(true).addClass("jstree-last").append("<ul/>"))
+						.append(node.clone(true));
+						
+					this.tree = $("<div/>").append(ul); 
+					
+					
+				},
+				afterEach : function(){
+					
+				}
+				
+			});
+			
+			test("openNodeTest",function(){
+				
+				this.jt.jstree("clean_node",this.tree);
+				
+				ok(this.tree.find("li:eq(0)").hasClass("jstree-open"));
+				notOk(this.tree.find("li:eq(0)").hasClass("jstree-leaf"),"open 되어 있는 노드는 하위 노드가 있기 때문에 jstree-leaf 추가되면 안된다");
+				
+			});
+			
+			test("cloasedNodeTest",function(){
+				this.jt.jstree("clean_node",this.tree);
+				
+				ok(this.tree.find("li:eq(1)").hasClass("jstree-cloased"));
+				ok(this.tree.find("li:eq(1)").hasClass("jstree-leaf"));
+			});
+			
+			test("leafNodeTest",function(){
+				this.jt.jstree("clean_node",this.tree);
+				
+				ok(this.tree.find("li:eq(2)").hasClass("jstree-leaf"));
+				equal(this.tree.find("li:eq(2) > ul").length, 0 , "leaf 노드는 ul 요소가 있으면 안된다.");
+				
+			})
+			
+			test("lastNodeTest",function(){
+				
+				this.jt.jstree("clean_node",this.tree);
+				
+				ok(this.tree.find("li:eq(3)").hasClass("jstree-last"),"마지막 node는 last class가 추가 된다.")
+				ok(this.tree.find("li:eq(3)").hasClass("jstree-leaf"))
+			});
+			
+			module("open and close",{
+				beforeEach : function(){
+					this.jt = $("#demo");
+				},
+				afterEach : function(){
+					
+				}
+				
+			});
+			
 			test("open_nodeTest",function(){
 				this.jt.jstree("open_node","#thtml1");
 				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
 				
 			}); 
+			
+			test("close_nodeTest",function(){
+				this.jt.jstree("open_node","#thtml1");
+				this.jt.jstree("close_node","#thtml1");
+				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
+			});
+			
+			test("toggle_nodeTest",function(){
+				this.jt.jstree("open_node","#thtml1");
+				this.jt.jstree("toggle_node","#thtml1");
+				
+				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
+				
+				this.jt.jstree("toggle_node","#thtml1");
+				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
+			});
+			
+			test("open_allTest",function(){
+				this.jt.jstree("open_all","#thtml7_2");
+				ok(this.jt.find("#thtml2_1").hasClass("jstree-open"));
+			});
+			
+			test("close_allTest",function(){
+				this.jt.jstree("open_all","#thtml7_2");
+				this.jt.jstree("close_all","#thtml7_2");
+				ok(this.jt.find("#thtml2_1").hasClass("jstree-closed"));
+			})
 		
 		});
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id="qunit-fixture">
-		
-		</div>
-			<div id="demo" class="demo">
+		<div id="qunit-fixture"></div>
+			<div id="demo">
 				<ul>
 					<li id="thtml1">
 						<a href="#">Root node 1</a>
@@ -99,6 +217,7 @@
 						<a href="#">Root node 2</a>
 						<ul>
 							<li id="thtml2_1">
+								<a href="#">Child node 2_1</a>
 								<ul>
 									<li id= "thtml2_1_1">
 										<a href="#">Child node 2_1_1</a>
@@ -107,7 +226,6 @@
 										<a href="#">Child node 2_1_2</a>
 									</li>
 								</ul>
-								<a href="#">Child node 2_1</a>
 							</li>
 							<li id="thtml2_2">
 								<a href="#">Child node 2_2</a>
@@ -116,7 +234,6 @@
 					</li>
 				</ul>
 			</div>
-			
 		
 	</body>
 </html>
