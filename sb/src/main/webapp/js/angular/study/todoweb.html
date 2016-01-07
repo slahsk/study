@@ -7,14 +7,17 @@
 	<link rel="stylesheet" href="../../bootstrap/css/bootstrap.css">
 	<script type="text/javascript">
 	
-				var todoList = [
-							{done : true, title : "AngularJS 독서"},
-							{done : false, title : "AngularJS 공부하기"},
-							{done : false, title : "개인 프로젝트 구성"}
-						];
+		
 	
 		angular.module("myapp",[])
 			.controller("todoCtrl",function($scope){
+				var todoList = [
+								{done : true, title : "AngularJS 독서"},
+								{done : false, title : "AngularJS 공부하기"},
+								{done : false, title : "개인 프로젝트 구성"}
+							];
+				
+				console.log("controller");
 				$scope.appName = "AngularJS TODO APP";
 				$scope.todoList = todoList;
 				
@@ -51,7 +54,6 @@
 		전체 할 일 <strong>{{todoList.length}}</strong>개 / 남은 할일은 <strong>{{remain()}}</strong>개
 		[<a href="" ng-click="archive()">보관하기</a>]
 	</p>
-	{{todoList}}
 	<ul class="list-unstyled">
 		<li ng-repeat="todo in todoList" class="checkbox" >
 			<input type="checkbox" ng-model="todo.done">{{todo.title}}
@@ -65,7 +67,7 @@
 			</label>
 			<input type="text" class="form-control" name="newItemText" placeholder="새로운 할 일" ng-model="newTitle">
 		</div>
-		<button class="btn btn-default" ng-click="addNewTodo(newTitle)">
+		<button type="button" class="btn btn-default" ng-click="addNewTodo(newTitle)">
 			추가
 		</button>
 	</form>
