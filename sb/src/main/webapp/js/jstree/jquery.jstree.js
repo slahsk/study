@@ -1471,7 +1471,7 @@
 				obj = obj.children("a:eq(0)");
 				
 				if(this._get_settings().core.html_titles) {
-					var tmp = obj.children("INS").clone();//아이콘 제거후
+					var tmp = obj.children("INS").clone();//아이콘  복사
 					obj.html(val).prepend(tmp);//값 넣고 다시 아이콘 삽입
 					this.__callback({ "obj" : obj, "name" : val });
 					return true;

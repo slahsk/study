@@ -16,20 +16,51 @@
 		<script type="text/javascript">
 		
 		$(document).ready(function(){
+			var tag = '<div id="demo">'+
+						'<ul>'+
+							'<li id="thtml1">'+
+								'<a href="#">Root node 1</a>'+
+								'<ul>'+
+									'<li id="thtml1_1">'+
+										'<a href="#">Child node 1_1</a>'+
+									'</li>'+
+									'<li id="thtml1_2">'+
+										'<a href="#">Child node 1_2</a>'+
+									'</li>'+
+								'</ul>'+
+							'</li>'+
+							'<li id="thtml7_2">'+
+								'<a href="#">Root node 2</a>'+
+								'<ul>'+
+									'<li id="thtml2_1">'+
+										'<a href="#">Child node 2_1</a>'+
+										'<ul>'+
+											'<li id= "thtml2_1_1">'+
+												'<a href="#">Child node 2_1_1</a>'+
+											'</li>'+
+											'<li id = "thtml2_1_2">'+
+												'<a href="#">Child node 2_1_2</a>'+
+											'</li>'+
+										'</ul>'+
+									'</li>'+
+									'<li id="thtml2_2">'+
+										'<a href="#">Child node 2_2</a>'+
+									'</li>'+
+								'</ul>'+
+							'</li>'+
+						'</ul>'+
+					'</div>';
 			
+			var jstree = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
 			
-			
-			$("#demo").jstree({ 
-				"core" : { "initially_open" : [ "thtml1_1" ] },
-			});
 			
 			module("core",{
 				beforeEach : function(){
-					this.jt = $("#demo");
-					this.node = $("<li/>").append($("<ul/>"));
+					this.jt = jstree;
 				},
 				afterEach : function(){
-					
 				}
 				
 			});
@@ -75,9 +106,9 @@
 				equal(text,"Child node 2_1_1");
 			});
 			
-			test("set_textTest",function(){
-				var beforeText = this.jt.jstree("get_text","#thtml2_1_2");
+			test("set_text_Test",function(){
 				
+				var beforeText = this.jt.jstree("get_text","#thtml2_1_2");
 				
 				this.jt.jstree("set_text","#thtml2_1_2","newText");
 				var afterText = this.jt.jstree("get_text","#thtml2_1_2");
@@ -87,21 +118,22 @@
 				equal(afterText,"newText");
 			})
 			
-			test("correct_stateTest",function(){
+			test("correct_state_Test",function(){
 				
-				var obj = this.node.addClass("jstree-closed");
+				var obj = $("<li/>").append($("<ul/>")).addClass("jstree-closed");
 				
 				sinon.stub($.jstree._fn, "_get_node").withArgs("#thtml2_1_2").returns(obj);
 				this.jt.jstree("correct_state","#thtml2_1_2");
 				ok(obj.hasClass("jstree-leaf"));
 				equal(obj.find("ul").length,0);
 				
+				$.jstree._fn._get_node.restore();
+				
 			});
 			
 			module("clean_node",{
 				beforeEach : function(){
-					this.jt = $("#demo");
-					
+					this.jt = jstree;
 					var node = $("<li/>").append($("<a/>").html("node"));
 					var ul = $("<ul/>")
 						.append(node.clone(true).addClass("jstree-open"))
@@ -153,27 +185,54 @@
 			
 			module("open and close",{
 				beforeEach : function(){
-					this.jt = $("#demo");
+					this.jt = jstree;
+					
+					this.node = $("<li/>")
+						.append($("<a/>").html("nodeName"))
+						.append($("<ul/>"));
+					
+					sinon.stub($.jstree._fn, "_get_node").returns(this.node);
 				},
 				afterEach : function(){
-					
+					$.jstree._fn._get_node.restore();
 				}
 				
 			});
 			
-			test("open_nodeTest",function(){
+			 test("open_node_Test",function(){
+				this.node.addClass("jstree-closed");
+				
+				
 				this.jt.jstree("open_node","#thtml1");
-				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
+				
+				ok(this.node.hasClass("jstree-open"));
+				
 				
 			}); 
 			
-			test("close_nodeTest",function(){
+		 	test("open_node_loaded_test",function(){
+		 		this.node.addClass("jstree-closed");
+				sinon.stub($.jstree._fn, "_is_loaded").returns(false);
+				var spy = sinon.spy($.jstree._fn,"load_node");
+				
+				this.jt.jstree("open_node","#thtml1");
+				
+				ok(spy.called);
+				ok(this.node.children("a").hasClass("jstree-loading"))
+				
+				$.jstree._fn._is_loaded.restore();
+				$.jstree._fn.load_node.restore();
+			}); 
+		 	
+		 	
+			/* 
+			test("close_node_Test",function(){
 				this.jt.jstree("open_node","#thtml1");
 				this.jt.jstree("close_node","#thtml1");
 				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
 			});
 			
-			test("toggle_nodeTest",function(){
+			test("toggle_node_Test",function(){
 				this.jt.jstree("open_node","#thtml1");
 				this.jt.jstree("toggle_node","#thtml1");
 				
@@ -183,16 +242,16 @@
 				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
 			});
 			
-			test("open_allTest",function(){
+			test("open_all_Test",function(){
 				this.jt.jstree("open_all","#thtml7_2");
 				ok(this.jt.find("#thtml2_1").hasClass("jstree-open"));
 			});
 			
-			test("close_allTest",function(){
+			test("close_all_Test",function(){
 				this.jt.jstree("open_all","#thtml7_2");
 				this.jt.jstree("close_all","#thtml7_2");
 				ok(this.jt.find("#thtml2_1").hasClass("jstree-closed"));
-			})
+			})  */
 		
 		});
 		</script>
@@ -200,40 +259,5 @@
 	<body>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
-			<div id="demo">
-				<ul>
-					<li id="thtml1">
-						<a href="#">Root node 1</a>
-						<ul>
-							<li id="thtml1_1">
-								<a href="#">Child node 1_1</a>
-							</li>
-							<li id="thtml1_2">
-								<a href="#">Child node 1_2</a>
-							</li>
-						</ul>
-					</li>
-					<li id="thtml7_2">
-						<a href="#">Root node 2</a>
-						<ul>
-							<li id="thtml2_1">
-								<a href="#">Child node 2_1</a>
-								<ul>
-									<li id= "thtml2_1_1">
-										<a href="#">Child node 2_1_1</a>
-									</li>
-									<li id = "thtml2_1_2">
-										<a href="#">Child node 2_1_2</a>
-									</li>
-								</ul>
-							</li>
-							<li id="thtml2_2">
-								<a href="#">Child node 2_2</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		
 	</body>
 </html>
