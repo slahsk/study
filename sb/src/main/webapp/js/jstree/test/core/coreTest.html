@@ -131,7 +131,7 @@
 				
 			});
 			
-			module("clean_node",{
+			module("clean",{
 				beforeEach : function(){
 					this.jt = jstree;
 					var node = $("<li/>").append($("<a/>").html("node"));
@@ -205,7 +205,7 @@
 				
 				this.jt.jstree("open_node","#thtml1");
 				
-				ok(this.node.hasClass("jstree-open"));
+				ok(this.node.hasClass("jstree-open"),"closed 되어 있는 node 는 open 되어야 한다.");
 				
 				
 			}); 
@@ -217,41 +217,104 @@
 				
 				this.jt.jstree("open_node","#thtml1");
 				
-				ok(spy.called);
-				ok(this.node.children("a").hasClass("jstree-loading"))
+				ok(spy.called,"load 안되어 있으면 load_node 함수 실행");
+				ok(this.node.children("a").hasClass("jstree-loading"),"node a 요소에 loading calss 추가")
 				
 				$.jstree._fn._is_loaded.restore();
 				$.jstree._fn.load_node.restore();
 			}); 
 		 	
 		 	
-			/* 
 			test("close_node_Test",function(){
-				this.jt.jstree("open_node","#thtml1");
+				this.node.addClass("jstree-open");
 				this.jt.jstree("close_node","#thtml1");
-				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
-			});
-			
-			test("toggle_node_Test",function(){
-				this.jt.jstree("open_node","#thtml1");
-				this.jt.jstree("toggle_node","#thtml1");
 				
-				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
+				ok(this.node.hasClass("jstree-closed"));
+			});
+			
+			module("create",{
+				beforeEach : function(){
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
+					var node = $("<li/>").append($("<a/>").html("node"));
+				},
+				afterEach : function(){
+					
+				}
 				
-				this.jt.jstree("toggle_node","#thtml1");
-				ok(this.jt.find("#thtml1").hasClass("jstree-open"));
+			})
+			
+			test("beforePositionTest",function(){
+				this.jt.jstree("create_node","#thtml1","before");
+				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-leaf"));
 			});
 			
-			test("open_all_Test",function(){
-				this.jt.jstree("open_all","#thtml7_2");
-				ok(this.jt.find("#thtml2_1").hasClass("jstree-open"));
+			test("afterPositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1","after");
+				
+				ok(this.jt.children("ul").children("li:eq(1)").hasClass("jstree-leaf"));
+				
 			});
 			
-			test("close_all_Test",function(){
-				this.jt.jstree("open_all","#thtml7_2");
-				this.jt.jstree("close_all","#thtml7_2");
-				ok(this.jt.find("#thtml2_1").hasClass("jstree-closed"));
-			})  */
+			test("firstPositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1","first");
+				
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"));
+				
+			});
+			test("insidePositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1","inside");
+				
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"inside 는 first 같다");
+				
+			});
+			
+			test("lastPositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1","first");
+				
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"));
+				
+			});
+			
+			test("defaultPositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1","aaaaaaaaa");
+				
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"position 에 없는 값이 들어 오면 는 first와 같다");
+				
+			});
+			
+			test("emptyPositionTest",function(){
+				
+				this.jt.jstree("create_node","#thtml1");
+				
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"),"default 는 last와 같다");
+				
+			});
+			
+			test("dataOpenTest",function(){
+				var jsData ={
+						state : "open",
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				
+				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-open"));
+			});
+			test("dataClosedTest",function(){
+				var jsData ={
+						state : "closed",
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				
+				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-closed"));
+			});
 		
 		});
 		</script>
