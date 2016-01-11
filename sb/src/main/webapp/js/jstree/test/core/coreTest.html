@@ -29,7 +29,7 @@
 									'</li>'+
 								'</ul>'+
 							'</li>'+
-							'<li id="thtml7_2">'+
+							'<li id="thtml2">'+
 								'<a href="#">Root node 2</a>'+
 								'<ul>'+
 									'<li id="thtml2_1">'+
@@ -247,14 +247,14 @@
 			
 			test("beforePositionTest",function(){
 				this.jt.jstree("create_node","#thtml1","before");
-				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-leaf"));
+				ok(this.jt.find(" > ul > li:eq(0)").hasClass("jstree-leaf"));
 			});
 			
 			test("afterPositionTest",function(){
 				
 				this.jt.jstree("create_node","#thtml1","after");
 				
-				ok(this.jt.children("ul").children("li:eq(1)").hasClass("jstree-leaf"));
+				ok(this.jt.find(" > ul > li:eq(1)").hasClass("jstree-leaf"));
 				
 			});
 			
@@ -262,14 +262,14 @@
 				
 				this.jt.jstree("create_node","#thtml1","first");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"));
+				ok(this.jt.find(" > ul > #thtml1 > ul > li:eq(0)").hasClass("jstree-leaf"));
 				
 			});
 			test("insidePositionTest",function(){
 				
 				this.jt.jstree("create_node","#thtml1","inside");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"inside 는 first 같다");
+				ok(this.jt.find(" > ul > #thtml1 > ul > li:eq(0)").hasClass("jstree-leaf"),"inside 는 first 같다");
 				
 			});
 			
@@ -285,7 +285,7 @@
 				
 				this.jt.jstree("create_node","#thtml1","aaaaaaaaa");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"position 에 없는 값이 들어 오면 는 first와 같다");
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"position 에 이상한 값이 들어 오면 는 first와 같다");
 				
 			});
 			
@@ -293,28 +293,106 @@
 				
 				this.jt.jstree("create_node","#thtml1");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"),"default 는 last와 같다");
+				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"),"position 에 값이 없으면 default 는 last와 같다");
 				
 			});
 			
-			test("dataOpenTest",function(){
-				var jsData ={
-						state : "open",
-				};
-				
-				this.jt.jstree("create_node","#thtml1","before",jsData);
-				
-				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-open"));
-			});
-			test("dataClosedTest",function(){
+			test("dataStateTest",function(){
 				var jsData ={
 						state : "closed",
 				};
 				
 				this.jt.jstree("create_node","#thtml1","before",jsData);
 				
-				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-closed"));
+				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-closed"),"state 에 따라 open, closed 속성 제어");
 			});
+			
+			test("dataAttrTest",function(){
+				var jsData ={
+						attr : {"class":"test"}
+				};
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				ok(this.jt.find(" > ul > li:eq(0)").hasClass("test"),"새로 생성되는 node 에 attr 에 요소에 속성을 추가 할 수 있다.");
+			});
+			
+			test("dataMetadataTest",function(){
+				var jsData ={
+						metadata : {"test":"test"}
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				ok(this.jt.find(" > ul > li:eq(0)").data("test"),"$.data 에 추가");
+			});
+			
+			test("dataNodeNameStringTest",function(){
+				var jsData ={
+						data : "testNode"
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				equal(this.jt.find(" > ul > li:eq(0) > a").text().trim(),"testNode","node 이름을 String 지정");
+				
+			});
+			
+			test("dataNodeNameObjectTest",function(){
+				var jsData ={
+						data : {
+							title : "testNode"
+						}
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				equal(this.jt.find(" > ul > li:eq(0) > a").text().trim(),"testNode","node 이름을 Object 로 지정");
+				
+			});
+			
+			test("dataIconImagePathTest",function(){
+				var jsData ={
+						data : {
+							icon : "/test/test.jpg"
+						}
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				ok(this.jt.find(" > ul > li:eq(0) > a > ins").css("background").indexOf("/test/test.jpg") > -1,"icon 이미지 경로로 지정");
+				
+			});
+			
+			test("dataIconStyleTest",function(){
+				var jsData ={
+						data : {
+							icon : "testCss"
+						}
+				};
+				
+				this.jt.jstree("create_node","#thtml1","before",jsData);
+				ok(this.jt.find(" > ul > li:eq(0) > a > ins").hasClass("testCss"),"icon class 명으로 지정");
+				
+			});
+			
+			
+			
+			module("prepare_move",{
+				beforeEach : function(){
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
+					var node = $("<li/>").append($("<a/>").html("node"));
+				},
+				afterEach : function(){
+					
+				}
+			});
+			
+			 test("prepare_move",function(){
+				
+				this.jt.jstree("prepare_move","#thtml1","#thtml2_1","after");
+				
+				console.log($.jstree._reference(1)._get_move());
+				ok(1);
+				
+			}); 
+			
 		
 		});
 		</script>
