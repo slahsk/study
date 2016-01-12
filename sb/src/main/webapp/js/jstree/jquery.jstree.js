@@ -1133,10 +1133,10 @@
 					// 에니메이션 멈추고 li 객체 숨기기
 					obj.children("ul").stop(true, true).slideUp(s, function () { 
 							this.style.display = ""; 
-							t.after_close(obj); // after_close 콜백함수 실행
+							t.after_close(obj);
 						}); 
 				}else { 
-					t.after_close(obj); // after_close 콜백함수 실행
+					t.after_close(obj); 
 				}
 				this.__callback({ "obj" : obj }); // close_node 콜백함수 실행
 			},
@@ -1166,7 +1166,7 @@
 					obj = this.get_container_ul(); 
 				}
 				
-				// closed 객체 가져오기
+				// closed node 가져오기
 				if(original_obj) { 
 					obj = obj.find("li.jstree-closed");
 				}else {
@@ -1180,7 +1180,7 @@
 				
 				var _this = this;
 				
-				// closed 객체 open
+				// closed node open
 				obj.each(function () { 
 					var __this = this; 
 					if(!_this._is_loaded(this)) {//load 되어 있으면 모두 오픈 
@@ -1543,9 +1543,9 @@
 				// prepared_move 객체하고 비교하여 같으면  리턴
 				if(!is_cb 
 				&& prepared_move.o 
-				&& prepared_move.o[0] === p.o[0]  
-				&& prepared_move.r[0] === p.r[0]
-				&& prepared_move.p === p.p) {
+				&& prepared_move.o.is(p.o)	//이동 노드
+				&& prepared_move.r.is(p.r)	//목표 노드
+				&& prepared_move.p === p.p) {		//position 같으면
 					this.__callback(prepared_move);
 					
 					if(cb) {// 콜백 함수 실행
@@ -1589,6 +1589,7 @@
 					switch(p.p) {
 						case "before":
 							p.cp = p.r.index(); // ref li 객체의 index 가져오기 
+							p.cr = p.rt._get_parent(p.r);
 							break;
 						case "after":
 							p.cp = p.r.index() + 1;
@@ -1611,15 +1612,12 @@
 				}
 				
 				// p.cr(목표 node) 객체가 없으면 (이동 node)root jquery객체 가져오기
-				p.np = p.cr == -1 ? p.rt.get_container() : p.cr;
+				p.np = (p.cr == -1) ? p.rt.get_container() : p.cr;
 
 				// root 개체에서 이동 node 부모 node jquery객체 가져오기
 				// p.o : 이동 node
 				// p.ot : jstree root 객체
 				p.op = p.ot._get_parent(p.o);
-				
-				// 이동 node index get
-				p.cop = p.o.index();
 				
 				//이동 node 의 부모 node 없으면 jstree 객체 가져오기
 				if(p.op === -1) { 
@@ -1627,19 +1625,21 @@
 					p.op = p.ot ? p.ot.get_container() : this.get_container(); 
 				}
 				
+				// 이동 node index get
+				p.cop = p.o.index();
 				
 				if(!/^(before|after)$/.test(p.p) //position 이 before, after 아니면 
 						&& p.op	// 이동 node 의 부모 node
 						&& p.np	// 목표  node
-						&& p.op[0] === p.np[0] 
-						&& p.o.index() < p.cp) { 
+						&& p.op.is(p.np) //같은 jstree
+						&& p.o.index() < p.cp) { //p.cp(node 개수) 
 					p.cp++; 
 				}
 				
 				// if(p.p === "before" && p.op && p.np && p.op[0] === p.np[0] &&
 				// p.o.index() < p.cp) { p.cp--; }
 				
-				// 자식 노드 에서 찾기
+				// 주입할 위치의 뒤에 있는 노드
 				//p.np : 목표 노드 부모
 				//p.or : 이동 목표 node 
 				p.or = p.np.find(" > ul > li:nth-child(" + (p.cp + 1) + ")");

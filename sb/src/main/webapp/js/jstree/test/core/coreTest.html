@@ -41,6 +41,9 @@
 											'<li id = "thtml2_1_2">'+
 												'<a href="#">Child node 2_1_2</a>'+
 											'</li>'+
+											'<li id = "thtml2_1_3">'+
+												'<a href="#">Child node 2_1_3</a>'+
+											'</li>'+
 										'</ul>'+
 									'</li>'+
 									'<li id="thtml2_2">'+
@@ -56,7 +59,7 @@
 					});
 			
 			
-			module("core",{
+			module("etc",{
 				beforeEach : function(){
 					this.jt = jstree;
 				},
@@ -277,7 +280,7 @@
 				
 				this.jt.jstree("create_node","#thtml1","first");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"));
+				ok(this.jt.find(" > ul > #thtml1 > ul > li:eq(2)").hasClass("jstree-leaf"));
 				
 			});
 			
@@ -285,7 +288,7 @@
 				
 				this.jt.jstree("create_node","#thtml1","aaaaaaaaa");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(0)").hasClass("jstree-leaf"),"position 에 이상한 값이 들어 오면 는 first와 같다");
+				ok(this.jt.find(" > ul > #thtml1 > ul > li:eq(0)").hasClass("jstree-leaf"),"position 에 이상한 값이 들어 오면 는 first와 같다");
 				
 			});
 			
@@ -293,7 +296,7 @@
 				
 				this.jt.jstree("create_node","#thtml1");
 				
-				ok(this.jt.children("ul").children("#thtml1").find("li:eq(2)").hasClass("jstree-leaf"),"position 에 값이 없으면 default 는 last와 같다");
+				ok(this.jt.find(" > ul > #thtml1 > ul > li:eq(2)").hasClass("jstree-leaf"),"position 에 값이 없으면 default 는 last와 같다");
 				
 			});
 			
@@ -304,7 +307,7 @@
 				
 				this.jt.jstree("create_node","#thtml1","before",jsData);
 				
-				ok(this.jt.children("ul").children("li:eq(0)").hasClass("jstree-closed"),"state 에 따라 open, closed 속성 제어");
+				ok(this.jt.find(" > ul > li:eq(0)").hasClass("jstree-closed"),"state 에 따라 open, closed 속성 제어");
 			});
 			
 			test("dataAttrTest",function(){
@@ -372,24 +375,100 @@
 			
 			
 			
-			module("prepare_move",{
+			module("prepare",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
 						"core" : { "initially_open" : [ "thtml1_1" ] },
 					});
-					var node = $("<li/>").append($("<a/>").html("node"));
 				},
 				afterEach : function(){
 					
 				}
 			});
 			
-			 test("prepare_move",function(){
+			
+			test("afterPosition",function(){
 				
-				this.jt.jstree("prepare_move","#thtml1","#thtml2_1","after");
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","after");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
 				
-				console.log($.jstree._reference(1)._get_move());
-				ok(1);
+				equal(prepare.p, "after");
+				equal(prepare.cp, jstree.find("#thtml2_1").index() + 1 , "목표 노드 다음 index");
+				ok(prepare.cr.is(jstree.find("#thtml2")), "목표 노드의 부모 노드");
+				
+			});
+			
+			test("beforePosition",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","before");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.p, "before");
+				equal(prepare.cp, jstree.find("#thtml2_1").index() , "삽입 되는 index");
+				ok(prepare.cr.is(jstree.find("#thtml2")), "목표 노드의 부모 노드");
+				
+				
+			});
+			
+			test("firstPositon",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				
+				equal(prepare.p, "first");
+				equal(prepare.cp, 0 , "목표 노드 다음 index");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+			});
+			
+			test("insidePositon",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				
+				equal(prepare.p, "first");
+				equal(prepare.cp, 0 , "목표 노드의 첫번째 인덱스");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+			});
+			
+			test("lastPosition",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","last");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.p, "last");
+				equal(prepare.cp, jstree.find("#thtml2_1 > ul > li").length , "목표 노드의 자식 노드의 마지막 index");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+				
+			});
+			
+			test("nullPosition",function(){
+				
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.p,"last","position null 이면 last 이다.");
+				
+			});
+			
+			test("nullReference",function(){
+				
+				var jstree = this.jt.jstree("prepare_move","#thtml1");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.r, false, "이동목표 node가 없음");
+				equal(prepare.cr, -1,"이동시킬 목표 노드가 없으면 -1");
+				equal(prepare.cp, jstree.find(" > ul > li").length + 1,"이동시킬 목표 node 가 없기 때문에 최상위 node 개수 조회후 +1 하여 노드를 주입할 index를 구한다.");
+				ok(prepare.np.is(jstree),"jstree 객체와 같다");
+				ok(prepare.o.is(jstree.find("#thtml1")),"이동 되는 node");
+				equal(prepare.cop,jstree.find("#thtml1").index(), "이동 되는 nodex index");
+				equal(prepare.or.length, 0, "positon last 이기에 주입되는 위치 뒤에는 node 가 없다.");
+				equal(prepare.ot, $.jstree._reference(id),"jstree 객체");
+				ok(prepare.op.is(jstree), "이동 되는 node의 부모 객체");
 				
 			}); 
 			
