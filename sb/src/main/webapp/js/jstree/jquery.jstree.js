@@ -1558,12 +1558,15 @@
 								p.cp = p.p;
 								break;
 						}
+						
+						p.np = p.rt.get_container();
 					}
 					else { // ref li 객체가 있으면
 						// before after 아니면서 로드가 안되어 있으면 load_node 함수 실행후 콜백으로 prepare_move 함수 다시 실행
 						if(!/^(before|after)$/.test(p.p) && !jstreeFn()._is_loaded(p.r)) {
 							return jstreeFn().load_node(p.r, function () { jstreeFn().prepare_move(o, r, pos, cb, true); });
 						}
+						
 						switch(p.p) {
 							case "before":
 								p.cp = p.r.index(); // ref li 객체의 index 가져오기 
@@ -1587,10 +1590,12 @@
 								p.cr = p.r;
 								break;
 						}
+						
+						p.np =  p.cr;
 					}
 					
 					// p.cr(목표 node) 객체가 없으면 (이동 node)root jquery객체 가져오기
-					p.np = (p.cr == -1) ? p.rt.get_container() : p.cr;
+					//p.np = (p.cr == -1) ? p.rt.get_container() : p.cr;
 					
 					// 주입할 위치의 뒤에 있는 노드
 					//p.np : 목표 노드 부모

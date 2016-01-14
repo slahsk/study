@@ -395,7 +395,9 @@
 				
 				equal(prepare.p, "after");
 				equal(prepare.cp, jstree.find("#thtml2_1").index() + 1 , "목표 노드 다음 index");
-				ok(prepare.cr.is(jstree.find("#thtml2")), "목표 노드의 부모 노드");
+				
+				ok(prepare.np.is(jstree.find("#thtml2")),"reference node의 부모");
+				ok(prepare.cr.is(jstree.find("#thtml2")),"reference node의 부모");
 				
 			});
 			
@@ -406,7 +408,9 @@
 				
 				equal(prepare.p, "before");
 				equal(prepare.cp, jstree.find("#thtml2_1").index() , "삽입 되는 index");
-				ok(prepare.cr.is(jstree.find("#thtml2")), "목표 노드의 부모 노드");
+				
+				ok(prepare.np.is(jstree.find("#thtml2")),"reference node의 부모");
+				ok(prepare.cr.is(jstree.find("#thtml2")),"reference node의 부모");
 				
 				
 			});
@@ -418,19 +422,23 @@
 				
 				
 				equal(prepare.p, "first");
-				equal(prepare.cp, 0 , "목표 노드 다음 index");
-				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+				equal(prepare.cp, 0 , "목표 노드의 첫번째 인덱스");
+				
+				ok(prepare.np.is(jstree.find("#thtml2_1")),"reference node");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")),"reference node");
 			});
 			
 			test("insidePositon",function(){
-				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","inside");
 				var id = jstree.data("jstree_instance_id");
 				var prepare = $.jstree._reference(id)._get_move();
 				
 				
-				equal(prepare.p, "first");
+				equal(prepare.p, "inside");
 				equal(prepare.cp, 0 , "목표 노드의 첫번째 인덱스");
-				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+				
+				ok(prepare.np.is(jstree.find("#thtml2_1")),"reference node");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")),"reference node");
 			});
 			
 			test("lastPosition",function(){
@@ -440,7 +448,9 @@
 				
 				equal(prepare.p, "last");
 				equal(prepare.cp, jstree.find("#thtml2_1 > ul > li").length , "목표 노드의 자식 노드의 마지막 index");
-				ok(prepare.cr.is(jstree.find("#thtml2_1")), "목표 노드");
+				
+				ok(prepare.np.is(jstree.find("#thtml2_1")),"reference node");
+				ok(prepare.cr.is(jstree.find("#thtml2_1")),"reference node");
 				
 			});
 			
@@ -454,24 +464,68 @@
 				
 			});
 			
-			test("nullReference",function(){
+			
+			test("moveNodeParentTest",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1_1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				ok(prepare.op.is(jstree.find("#thtml1")), "이동 되는 node의 부모 객체");
+			});
+			
+			test("moveNodeParentNonexistentTest",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				ok(prepare.op.is(jstree), "move node 의 부모가 없으면 jstree selecter 객체");
+				
+			});
+			
+			
+			test("nullReferenceTest",function(){
 				
 				var jstree = this.jt.jstree("prepare_move","#thtml1");
 				var id = jstree.data("jstree_instance_id");
 				var prepare = $.jstree._reference(id)._get_move();
 				
-				equal(prepare.r, false, "이동목표 node가 없으면 false");
-				equal(prepare.cr, -1,"이동시킬 목표 노드가 없으면 -1");
-				equal(prepare.cp, jstree.find(" > ul > li").length + 1,"이동시킬 목표 node 가 없기 때문에 최상위 node 개수 조회후 +1 하여 노드를 주입할 index를 구한다.");
-				ok(prepare.np.is(jstree),"jstree 객체와 같다");
-				ok(prepare.o.is(jstree.find("#thtml1")),"이동 되는 node");
-				equal(prepare.cop,jstree.find("#thtml1").index(), "이동 되는 nodex index");
-				equal(prepare.or.length, 0, "positon last 이기에 주입되는 위치 뒤에는 node 가 없다.");
-				equal(prepare.ot, $.jstree._reference(id),"jstree 객체");
-				ok(prepare.op.is(jstree), "이동 되는 node의 부모 객체");
-				
+				equal(prepare.r, false, "reference node 없으면 false");
+				equal(prepare.cr, -1,"reference node 없으면 -1");
+				ok(prepare.np.is(jstree),"reference node 가 없기때문에 jstree selecter 객체");
 			}); 
 			
+			
+			test("nodeTest",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				
+				ok(prepare.o.is(jstree.find("#thtml1")),"move node");
+				ok(prepare.r.is(jstree.find("#thtml2_1")),"reference node");
+				
+				
+			});
+			
+			test("nodeInstanceTest",function(){
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.ot, $.jstree._reference(id),"jstree instance 객체");
+				equal(prepare.rt, $.jstree._reference(id),"jstree instance 객체");
+				
+				
+			});
+			
+			test("moveNodeIndexTest",function(){
+				
+				var jstree = this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				var id = jstree.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				equal(prepare.cop,jstree.find("#thtml1").index(), "이동 되는 nodex index");
+			});
 		
 		});
 		</script>
