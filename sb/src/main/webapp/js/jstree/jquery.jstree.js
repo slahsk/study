@@ -1528,24 +1528,127 @@
 			cb : 콜백함수
 			*/
 			prepare_move : function (o, r, pos, cb, is_cb) {// 이동 준비?
-				var p = {};
+				
+				function getJstreeFn(fnObject){
+					var jstreeFn = fnObject;
+						
+					return function(){
+						return jstreeFn;
+					}
+				}
+				
+				function setPosition(p){
 
-				p.ot = $.jstree._reference(o) || this; //jstree 객체 가져오기
-				p.o = p.ot._get_node(o); // obj li(node) jquery seleter 객체
+					/*
+					 * 이동시킬 목표 node 없으면
+					 */
+					if(p.r === -1 || !p.r) {
+						p.cr = -1;
+						switch(p.p) {
+							case "first":
+							case "before":
+							case "inside":
+								p.cp = 0; 
+								break;
+							case "after":
+							case "last":
+								p.cp = p.rt.get_container().find(" > ul > li").length; 
+								break;
+							default:
+								p.cp = p.p;
+								break;
+						}
+					}
+					else { // ref li 객체가 있으면
+						// before after 아니면서 로드가 안되어 있으면 load_node 함수 실행후 콜백으로 prepare_move 함수 다시 실행
+						if(!/^(before|after)$/.test(p.p) && !jstreeFn()._is_loaded(p.r)) {
+							return jstreeFn().load_node(p.r, function () { jstreeFn().prepare_move(o, r, pos, cb, true); });
+						}
+						switch(p.p) {
+							case "before":
+								p.cp = p.r.index(); // ref li 객체의 index 가져오기 
+								p.cr = p.rt._get_parent(p.r);
+								break;
+							case "after":
+								p.cp = p.r.index() + 1;
+								p.cr = p.rt._get_parent(p.r);
+								break;
+							case "inside":
+							case "first":
+								p.cp = 0; //index
+								p.cr = p.r; // 목표 node li jquery 객체
+								break;
+							case "last":
+								p.cp = p.r.find(" > ul > li").length; 
+								p.cr = p.r;
+								break;
+							default: 
+								p.cp = p.p;
+								p.cr = p.r;
+								break;
+						}
+					}
+					
+					// p.cr(목표 node) 객체가 없으면 (이동 node)root jquery객체 가져오기
+					p.np = (p.cr == -1) ? p.rt.get_container() : p.cr;
+					
+					// 주입할 위치의 뒤에 있는 노드
+					//p.np : 목표 노드 부모
+					//p.or : 이동 목표 node 
+					p.or = p.np.find(" > ul > li:nth-child(" + (p.cp + 1) + ")");
+					
+				}
 				
-				// r 값이 있으면 node jquery 객체 가져오기
-				p.r = r === - 1 ? -1 : this._get_node(r); 
+				function getNodeAndPosition(moveNode,referenceNode,position){
+					var preapre = {};
+					var moveNodeRefence =  $.jstree._reference(moveNode) || jstreeFn(); //jstree 객체 가져오기
+					preapre.o = moveNodeRefence._get_node(moveNode); // obj li(node) jquery seleter 객체
+					
+					// r 값이 있으면 node jquery 객체 가져오기
+					preapre.r = (referenceNode === - 1) ? -1 : jstreeFn()._get_node(referenceNode); 
+					
+					// pos 값이 없거나 false 이면 last
+					// TODO: move to a setting
+					preapre.p = (typeof position === "undefined" || position === false) ? "last" : position; 
+					
+					return preapre;
+				}
 				
-				// pos 값이 없거나 false 이면 last
-				// TODO: move to a setting
-				p.p = (typeof pos === "undefined" || pos === false) ? "last" : pos; 
+				function setJstreeObject(preapre){
+					//jquery 객체에서 -> jstree 객체로 가져오기
+					preapre.ot = $.jstree._reference(preapre.o) || jstreeFn(); 
+					
+					// ref instance 가져오기
+					// r === -1 ? p.ot :  $.jstree._reference(p.r) || this
+					preapre.rt = $.jstree._reference(preapre.r) || jstreeFn(); 
+					
+				}
+				
+				function isPrepareObjectEqual(preapre){
+					return prepared_move.o && prepared_move.o.is(preapre.o) && prepared_move.r.is(preapre.r) && prepared_move.p === preapre.p;
+				}
+				
+				function setMoveNodeParent(preapre){
+					// root 개체에서 이동 node 부모 node jquery객체 가져오기
+					// p.o : 이동 node
+					// p.ot : jstree root 객체
+					preapre.op = preapre.ot._get_parent(preapre.o);
+					
+					//이동 node 의 부모 node 없으면 jstree 객체 가져오기
+					if(preapre.op === -1) { 
+						// p.op 에 값 set
+						preapre.op = preapre.ot ? preapre.ot.get_container() : jstreeFn().get_container(); 
+					}
+					
+				}
+				
+				var jstreeFn = getJstreeFn(this);
+				
+				
+				var p = getNodeAndPosition(o,r,pos);
 				
 				// prepared_move 객체하고 비교하여 같으면  리턴
-				if(!is_cb 
-				&& prepared_move.o 
-				&& prepared_move.o.is(p.o)	//이동 노드
-				&& prepared_move.r.is(p.r)	//목표 노드
-				&& prepared_move.p === p.p) {		//position 같으면
+				if(!is_cb &&  isPrepareObjectEqual(p)){
 					this.__callback(prepared_move);
 					
 					if(cb) {// 콜백 함수 실행
@@ -1554,76 +1657,12 @@
 					return;
 				}
 				
-				//jquery 객체에서 -> jstree 객체로 가져오기
-				p.ot = $.jstree._reference(p.o) || this; 
 				
-				// ref instance 가져오기
-				// r === -1 ? p.ot :  $.jstree._reference(p.r) || this
-				p.rt = $.jstree._reference(p.r) || this; 
+				setJstreeObject(p);
 				
-				/*
-				 * 이동시킬 목표 node 없으면
-				 */
-				if(p.r === -1 || !p.r) {
-					p.cr = -1;
-					switch(p.p) {
-						case "first":
-						case "before":
-						case "inside":
-							p.cp = 0; 
-							break;
-						case "after":
-						case "last":
-							p.cp = p.rt.get_container().find(" > ul > li").length; 
-							break;
-						default:
-							p.cp = p.p;
-							break;
-					}
-				}
-				else { // ref li 객체가 있으면
-					// before after 아니면서 로드가 안되어 있으면 load_node 함수 실행후 콜백으로 prepare_move 함수 다시 실행
-					if(!/^(before|after)$/.test(p.p) && !this._is_loaded(p.r)) {
-						return this.load_node(p.r, function () { this.prepare_move(o, r, pos, cb, true); });
-					}
-					switch(p.p) {
-						case "before":
-							p.cp = p.r.index(); // ref li 객체의 index 가져오기 
-							p.cr = p.rt._get_parent(p.r);
-							break;
-						case "after":
-							p.cp = p.r.index() + 1;
-							p.cr = p.rt._get_parent(p.r);
-							break;
-						case "inside":
-						case "first":
-							p.cp = 0; //index
-							p.cr = p.r; // 목표 node li jquery 객체
-							break;
-						case "last":
-							p.cp = p.r.find(" > ul > li").length; 
-							p.cr = p.r;
-							break;
-						default: 
-							p.cp = p.p;
-							p.cr = p.r;
-							break;
-					}
-				}
+				setPosition(p);
 				
-				// p.cr(목표 node) 객체가 없으면 (이동 node)root jquery객체 가져오기
-				p.np = (p.cr == -1) ? p.rt.get_container() : p.cr;
-
-				// root 개체에서 이동 node 부모 node jquery객체 가져오기
-				// p.o : 이동 node
-				// p.ot : jstree root 객체
-				p.op = p.ot._get_parent(p.o);
-				
-				//이동 node 의 부모 node 없으면 jstree 객체 가져오기
-				if(p.op === -1) { 
-					// p.op 에 값 set
-					p.op = p.ot ? p.ot.get_container() : this.get_container(); 
-				}
+				setMoveNodeParent(p);
 				
 				// 이동 node index get
 				p.cop = p.o.index();
@@ -1639,10 +1678,7 @@
 				// if(p.p === "before" && p.op && p.np && p.op[0] === p.np[0] &&
 				// p.o.index() < p.cp) { p.cp--; }
 				
-				// 주입할 위치의 뒤에 있는 노드
-				//p.np : 목표 노드 부모
-				//p.or : 이동 목표 node 
-				p.or = p.np.find(" > ul > li:nth-child(" + (p.cp + 1) + ")");
+				
 				
 				prepared_move = p;
 				
