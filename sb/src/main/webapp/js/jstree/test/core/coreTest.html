@@ -460,7 +460,7 @@
 				var id = jstree.data("jstree_instance_id");
 				var prepare = $.jstree._reference(id)._get_move();
 				
-				equal(prepare.r, false, "이동목표 node가 없음");
+				equal(prepare.r, false, "이동목표 node가 없으면 false");
 				equal(prepare.cr, -1,"이동시킬 목표 노드가 없으면 -1");
 				equal(prepare.cp, jstree.find(" > ul > li").length + 1,"이동시킬 목표 node 가 없기 때문에 최상위 node 개수 조회후 +1 하여 노드를 주입할 index를 구한다.");
 				ok(prepare.np.is(jstree),"jstree 객체와 같다");
