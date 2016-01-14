@@ -1259,13 +1259,165 @@
 			},
 			// Basic operations: create
 			create_node	: function (obj, position, js, callback, is_loaded) {
+				
+				function getJstreeFn(fnObject){
+					var jstreeFn = fnObject;
+						
+					return function(){
+						return jstreeFn;
+					}
+				}
+				
+				function setData(js){
+					// js 는 새로 생성할 li객체 기본값 설정
+					if(typeof js === "string") { 
+						js = { "data" : js }; 
+					}
+					
+					if(!js) { // js 없으면 빈오브젝트 생성
+						js = {}; 
+					} 
+					
+					if(!js.data) { // new_node 값 가져 오기
+						js.data = jstreeFn()._get_string("new_node"); 
+					} 
+					
+					if(!$.isArray(js.data)) { // js.data 배열이 아니면 배열로 변경
+						var tmp = js.data;  
+						js.data = []; 
+						js.data.push(tmp); 
+					}
+					
+					return js;
+				}
+				
+				function setNodeAttribute(js){
+					
+					 var node = $("<li />");
+					
+					
+					if(js.attr) { // d.attr 에 js.attr 값 추가
+						node.attr(js.attr); 
+					}
+					
+					if(js.metadata) { // metadata 있으면 d 에 추가
+						node.data(js.metadata); 
+					}
+					
+					if(js.state) { // sate는 opend 나 closed 로 추정됨
+						node.addClass("jstree-" + js.state); 
+					}
+					
+					return node;
+				}
+				
+				function createNodeNameAndIcon(m,js){
+					var nodeName = $("<a />"),
+						coreSetting = jstreeFn()._get_settings().core;
+					
+					// 문자 이면 a element 에 href 속성 추가
+					//html_titles 값에 따라 $.fn.html 또는 text 함수 실행
+					if(typeof m == "string") { 
+						nodeName.attr('href','#')[ coreSetting.html_titles ? "html" : "text" ](m); 
+					}else {
+						if(!m.attr) { // attr 속성이 없으면 추가
+							m.attr = {}; 
+						}
+						
+						if(!m.attr.href) { // href 속성 없으면 추가
+							m.attr.href = '#'; 
+						}
+						
+						nodeName.attr(m.attr)[ coreSetting.html_titles ? "html" : "text" ](m.title);
+						
+						if(m.language) { 
+							nodeName.addClass(m.language); 
+						}
+					}
+					
+					nodeName.prepend("<ins class='jstree-icon'>&#160;</ins>");
+					
+					if(!m.icon && js.icon) { 
+						m.icon = js.icon; 
+					}
+					
+					if(m.icon) { 
+						// icon "/" 없을시 ins태그에 class 추가
+						if(m.icon.indexOf("/") === -1) { 
+							nodeName.children("ins").addClass(m.icon); 
+						}else { // 배경 아이콘으로 변경
+							nodeName.children("ins").css("background","url('" + m.icon + "') center center no-repeat"); 
+						}
+					}
+					
+					return nodeName;
+				}
+				
+				function getLevelNodes(obj,position,data){
+					var nodes = null;
+					
+					switch(position) {
+						case "before":	obj.before(data); 
+										nodes = jstreeFn()._get_parent(obj); 
+										break;
+						case "after" :	obj.after(data);  
+										nodes = jstreeFn()._get_parent(obj); 
+										break;
+						case "inside":
+						case "first" :
+							if(!obj.children("ul").length) { // ul 객체가 없으면
+								obj.append("<ul />");  // ul 객체 삽입
+							}
+							
+							obj.children("ul").prepend(data);// ul 태그 앞에 ins 태그 삽입
+							nodes = obj;
+							break;
+						case "last":
+							if(!obj.children("ul").length) { 
+								obj.append("<ul />"); 
+							}
+							
+							obj.children("ul").append(data);// ul 태그 뒤에 ins 태그 삽입
+							nodes = obj;
+							break;
+						default:
+							//obj 에 ul태그 없으면 생성
+							if(!obj.children("ul").length) { 
+								obj.append("<ul />"); 
+							}
+						
+							if(!position) { // position 없으면 0으로
+								position = 0; 
+							}
+							// obj ul li의 첫번째 node 노드 가져오기
+							nodes = obj.children("ul").children("li").eq(position);
+							
+							if(nodes.length) { // li 객체가 있으면 li객체 앞에 추가(first)
+								nodes.before(data); 
+							}else { 
+								obj.children("ul").append(data);// ul태그에 삽입
+							}
+							
+							nodes = obj;
+							break;
+					}
+					
+					//최상위 노드에 추가 되었거나 생성된 노드가 없으면
+					if(nodes === -1 || nodes.get(0) === jstreeFn().get_container().get(0)) { 
+						nodes = -1; 
+					}
+					
+					
+					return nodes;
+				}
+				
+				
+				
 				obj = this._get_node(obj);
 				// position 없으면 마지막에
-				position = typeof position === "undefined" ? "last" : position;
+				position = (typeof position === "undefined") ? "last" : position;
 				
-				var d = $("<li />"),
-					s = this._get_settings().core,
-					tmp;
+				var jstreeFn = getJstreeFn(this);
 				
 				// obj 가 있으면 리턴
 				if(obj !== -1 && !obj.length) { 
@@ -1283,81 +1435,17 @@
 				}
 
 				this.__rollback();
-
-				// js 는 새로 생성할 li객체 기본값 설정
-				if(typeof js === "string") { 
-					js = { "data" : js }; 
-				}
 				
-				if(!js) { // js 없으면 빈오브젝트 생성
-					js = {}; 
-				} 
+				js = setData(js);
+				var d = setNodeAttribute(js);
 				
-				if(js.attr) { // d.attr 에 js.attr 값 추가
-					d.attr(js.attr); 
-				}
-				
-				if(js.metadata) { // metadata 있으면 d 에 추가
-					d.data(js.metadata); 
-				}
-				
-				if(js.state) { // sate는 opend 나 closed 로 추정됨
-					d.addClass("jstree-" + js.state); 
-				}
-				
-				if(!js.data) { // new_node 값 가져 오기
-					js.data = this._get_string("new_node"); 
-				} 
-				
-				if(!$.isArray(js.data)) { // js.data 배열이 아니면 배열로 변경
-					tmp = js.data;  
-					js.data = []; 
-					js.data.push(tmp); 
-				}
 				
 				$.each(js.data, function (i, m) {
-					tmp = $("<a />");
-					
 					// 함수이면 함수 실행 후 리턴값 m에 저장
 					if($.isFunction(m)) { 
 						m = m.call(this, js); 
 					}
-					
-					// 문자 이면 a element 에 href 속성 추가
-					//html_titles 값에 따라 $.fn.html 또는 text 함수 실행
-					if(typeof m == "string") { 
-						tmp.attr('href','#')[ s.html_titles ? "html" : "text" ](m); 
-					}else {
-						if(!m.attr) { // attr 속성이 없으면 추가
-							m.attr = {}; 
-						}
-						
-						if(!m.attr.href) { // href 속성 없으면 추가
-							m.attr.href = '#'; 
-						}
-						
-						tmp.attr(m.attr)[ s.html_titles ? "html" : "text" ](m.title);
-						
-						if(m.language) { 
-							tmp.addClass(m.language); 
-						}
-					}
-					
-					tmp.prepend("<ins class='jstree-icon'>&#160;</ins>");
-					if(!m.icon && js.icon) { 
-						m.icon = js.icon; 
-					}
-					
-					if(m.icon) { 
-						// icon "/" 없을시 ins태그에 class 추가
-						if(m.icon.indexOf("/") === -1) { 
-							tmp.children("ins").addClass(m.icon); 
-						}else { // 배경 아이콘으로 변경
-							tmp.children("ins").css("background","url('" + m.icon + "') center center no-repeat"); 
-						}
-					}
-					
-					d.append(tmp);
+					d.append(createNodeNameAndIcon(m,js));
 				});
 				
 				// ins 삽입
@@ -1376,60 +1464,13 @@
 					}
 				}
 				
-				switch(position) {
-					case "before":	obj.before(d); 
-									tmp = this._get_parent(obj); 
-									break;
-					case "after" :	obj.after(d);  
-									tmp = this._get_parent(obj); 
-									break;
-					case "inside":
-					case "first" :
-						if(!obj.children("ul").length) { // ul 객체가 없으면
-							obj.append("<ul />");  // ul 객체 삽입
-						}
-						
-						obj.children("ul").prepend(d);// ul 태그 앞에 ins 태그 삽입
-						tmp = obj;
-						break;
-					case "last":
-						if(!obj.children("ul").length) { 
-							obj.append("<ul />"); 
-						}
-						
-						obj.children("ul").append(d);// ul 태그 뒤에 ins 태그 삽입
-						tmp = obj;
-						break;
-					default:
-						//obj 에 ul태그 없으면 생성
-						if(!obj.children("ul").length) { 
-							obj.append("<ul />"); 
-						}
-					
-						if(!position) { // position 없으면 0으로
-							position = 0; 
-						}
-						// obj ul li의 첫번째 node 노드 가져오기
-						tmp = obj.children("ul").children("li").eq(position);
-						
-						if(tmp.length) { // li 객체가 있으면 li객체 앞에 추가(first)
-							tmp.before(d); 
-						}else { 
-							obj.children("ul").append(d);// ul태그에 삽입
-						}
-						
-						tmp = obj;
-						break;
-				}
-				
-				//최상위 노드에 추가 되었거나 생성된 노드가 없으면
-				if(tmp === -1 || tmp.get(0) === this.get_container().get(0)) { 
-					tmp = -1; 
-				}
 				
 				
-				this.clean_node(tmp);//last_node 새로 정의
-				this.__callback({ "obj" : d, "parent" : tmp });
+				var levelNodes = getLevelNodes(obj,position,d);
+				
+				this.clean_node(levelNodes);//last_node 새로 정의
+				
+				this.__callback({ "obj" : d, "parent" : levelNodes });
 				
 				if(callback) { 
 					callback.call(this, d); 
