@@ -1736,25 +1736,27 @@
 				}
 			},
 			check_move : function () {
-				var obj = prepared_move, 
-					ret = true,
-					//목표 node 가 없으면 jstree 객체 가져오기
-					r = obj.r === -1 ? this.get_container() : obj.r;
+				var obj = prepared_move;
+				
 				
 				//prepared_move 값이 같
 				if(!obj 
 					|| !obj.o 
-					|| obj.or[0] === obj.o[0]) {	//이동 node 하고 이동 목표 node(position 적용) 하고 같으면
+					|| obj.or.is(obj.o)) {	//이동 node 하고 이동 목표 node(position 적용) 하고 같으면
 					return false; 
 				}
 				
 				if(obj.op 
 					&& obj.np 
-					&& obj.op[0] === obj.np[0]	//이동 node 하고 이동 목표 node 부모 하고 같으면
+					&& obj.op.is(obj.np)	//이동 node 하고 이동 목표 node 부모 하고 같으면
 					&& obj.cp - 1 === obj.o.index()) { // position 위치 인덱스 하고 이동 node 인덱스가 같으면
 					return false; 
 				}
 				
+				var ret = true,
+					//목표 node 가 없으면 jstree 객체 가져오기
+					r = (obj.r === -1) ? this.get_container() : obj.r;
+					
 				obj.o.each(function () {
 					////이동 node 중에서 목표 node 중에 중복 되는  node 가 있으면
 					if(r.parentsUntil(".jstree", "li").andSelf().index(this) !== -1) { 
@@ -1762,6 +1764,7 @@
 						return false; // each 종료
 					}
 				});
+				
 				return ret;
 			},
 			move_node : function (obj, ref, position, is_copy, is_prepared, skip_check) {
@@ -1798,18 +1801,16 @@
 				}else { 
 					o = obj.o; 
 				}
-
+				
+				//형제로 들어가는냐 자식으로 들어 가는냐
 				if(obj.or.length) { 
 					obj.or.before(o); 
-				}else { 
-					// obj.np 목표 node 의 ul 객체가 없으면 true
-					//ul 객체 추가 (마지막 자식 node 는 ul 객체가 없기 에 추가 해준다)
+				}else {
+					//자식 노드가 없으면 ul 추가
 					if(!obj.np.children("ul").length) { 
 						$("<ul />").appendTo(obj.np); 
 					}
 					
-					// ul 에 추가
-					// 목표 node 의  ul 에 하위로 이동 node 추가
 					obj.np.children("ul:eq(0)").append(o); 
 				}
 
@@ -1821,6 +1822,7 @@
 					if(!obj.op.find("> ul > li").length) {
 						obj.op.removeClass("jstree-open jstree-closed").addClass("jstree-leaf").children("ul").remove();
 					}
+					
 				} catch (e) { }
 				
 				//복사이면

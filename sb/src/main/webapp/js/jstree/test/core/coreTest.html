@@ -54,20 +54,22 @@
 						'</ul>'+
 					'</div>';
 			
-			var jstree = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
-			
-			
 			module("etc",{
 				beforeEach : function(){
-					this.jt = jstree;
-				},
-				afterEach : function(){
+					this.jt =  $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
 				}
 				
 			});
-			test("set_focusTest",function(){
+			
+			test("delete_node_Test",function(){
+				this.jt.jstree("delete_node","#thtml1");
+				
+				equal(this.jt.find("#thtml1").length , 0 , "삭제");
+			});
+			
+			test("set_focus_Test",function(){
 				//sinon.stub($.jstree._fn,"is_focused").returns(true);
 				this.jt.jstree("set_focus");
 				ok(this.jt.jstree("is_focused"));
@@ -134,9 +136,12 @@
 				
 			});
 			
+			
 			module("clean",{
 				beforeEach : function(){
-					this.jt = jstree;
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
 					var node = $("<li/>").append($("<a/>").html("node"));
 					var ul = $("<ul/>")
 						.append(node.clone(true).addClass("jstree-open"))
@@ -188,7 +193,9 @@
 			
 			module("open and close",{
 				beforeEach : function(){
-					this.jt = jstree;
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});;
 					
 					this.node = $("<li/>")
 						.append($("<a/>").html("nodeName"))
@@ -386,6 +393,12 @@
 				}
 			});
 			
+			test("check_move_Test",function(){
+				
+				this.jt.jstree("prepare_move","#thtml1","#thtml2_1","first");
+				ok(this.jt.jstree("check_move"));
+				
+			});
 			
 			test("afterPosition",function(){
 				
@@ -526,6 +539,29 @@
 				
 				equal(prepare.cop,jstree.find("#thtml1").index(), "이동 되는 nodex index");
 			});
+			
+			module("move_node",{
+				beforeEach : function(){
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
+				}
+			});
+			
+			test("moveTest",function(){
+				this.jt.jstree("move_node","#thtml1","#thtml2_1","first");
+				ok(this.jt.find("#thtml2_1 > ul > li:eq(0)").is(this.jt.find("#thtml1")),"first 이기에 refenceNode 의 자식 첫번째로");
+			});
+			
+			test("copyTest",function(){
+				this.jt.jstree("move_node","#thtml1","#thtml2_1","first",true);
+				var id = this.jt.data("jstree_instance_id");
+				var prepare = $.jstree._reference(id)._get_move();
+				
+				ok(prepare.cy ,"prepared_move.cy 변수에 복사 하면 true");
+				equal(prepare.oc.attr("id"),"copy_thtml1","복사하면 id 앞에 copy 추가");
+			});
+			
 		
 		});
 		</script>
