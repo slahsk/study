@@ -53,7 +53,7 @@
 							'</li>'+
 						'</ul>'+
 					'</div>';
-			
+			/* ===================================================================================================================================== */
 			module("etc",{
 				beforeEach : function(){
 					this.jt =  $(tag).jstree({ 
@@ -75,32 +75,32 @@
 				ok(this.jt.jstree("is_focused"));
 			});
 			
-			test("unset_focusTest",function(){
+			test("unset_focus_Test",function(){
 				this.jt.jstree("set_focus");
 				this.jt.jstree("unset_focus");
 				notOk(this.jt.jstree("is_focused"));
 			});
 			 	
-			test("lockTest",function(){
+			test("lock_Test",function(){
 				this.jt.jstree("lock");
 				ok(this.jt.jstree("is_locked"));
 				ok(this.jt.children("ul").hasClass("jstree-locked"));
 			});
 			
-			test("unlockTest",function(){
+			test("unlock_Test",function(){
 				this.jt.jstree("lock");
 				this.jt.jstree("unlock");
 				notOk(this.jt.jstree("is_locked"));
 				notOk(this.jt.children("ul").hasClass("jstree-locked"));
 			});
 			
-			test("get_pathTest(ID)",function(){
+			test("get_path_Test(ID)",function(){
 				var path = this.jt.jstree("get_path","#thtml2_1_2",true);
 				equal(path.length,3);
 				equal(path[2],"thtml2_1_2")
 			});
 			
-			test("get_pathTest(TEXT)",function(){
+			test("get_path_Test(TEXT)",function(){
 				var path = this.jt.jstree("get_path","#thtml2_1_2",false);
 				equal(path.length,3);
 				equal(path[2],"Child node 2_1_2")
@@ -136,7 +136,7 @@
 				
 			});
 			
-			
+			/* ===================================================================================================================================== */
 			module("clean",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
@@ -190,7 +190,7 @@
 				ok(this.tree.find("li:eq(3)").hasClass("jstree-last"),"마지막 node는 last class가 추가 된다.")
 				ok(this.tree.find("li:eq(3)").hasClass("jstree-leaf"))
 			});
-			
+			/* ===================================================================================================================================== */
 			module("open and close",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
@@ -241,7 +241,7 @@
 				
 				ok(this.node.hasClass("jstree-closed"));
 			});
-			
+			/* ===================================================================================================================================== */
 			module("create",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
@@ -380,8 +380,7 @@
 				
 			});
 			
-			
-			
+			/* ===================================================================================================================================== */
 			module("prepare",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
@@ -539,7 +538,7 @@
 				
 				equal(prepare.cop,jstree.find("#thtml1").index(), "이동 되는 nodex index");
 			});
-			
+			/* ===================================================================================================================================== */
 			module("move_node",{
 				beforeEach : function(){
 					this.jt = $(tag).jstree({ 
@@ -561,6 +560,36 @@
 				ok(prepare.cy ,"prepared_move.cy 변수에 복사 하면 true");
 				equal(prepare.oc.attr("id"),"copy_thtml1","복사하면 id 앞에 copy 추가");
 			});
+			/* ===================================================================================================================================== */
+			module("event",{
+				beforeEach : function(){
+					this.jt = $(tag).jstree({ 
+						"core" : { "initially_open" : [ "thtml1_1" ] },
+					});
+				}
+			});
+			
+			test("iconClickTest",function(){
+				var spy = sinon.spy($.jstree._fn,"toggle_node");
+				this.jt.jstree("init");
+				this.jt.find("ul > li > ins:eq(0)").trigger("click")
+				
+				ok(spy.called);
+				
+				$.jstree._fn.toggle_node.restore();
+			});
+			
+			test("mousedownTest",function(){
+				var spy = sinon.spy($.jstree._fn,"set_focus");
+				this.jt.jstree("init");
+				this.jt.trigger("mousedown");
+				
+				ok(spy.called);
+				
+				$.jstree._fn.set_focus.restore();
+			});
+			
+			
 			
 		
 		});

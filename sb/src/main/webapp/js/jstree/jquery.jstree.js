@@ -290,6 +290,7 @@
 				 * initialize the instance $.jstree._fn =
 				 * $.jstree._instance.prototype core plugin 의 함수
 				 * $.jstree._fn.init() 실행
+				 * setTimeout을 이용한 비동기 호출 
 				 */
 				setTimeout(function() { 
 					if(instances[instance_id]) { 
@@ -570,21 +571,23 @@
 			 * 참조하고 있다. 런타임에는 $.jstree._fn 함수에서 참조해서 사용한다.
 			 */
 			init	: function () { 
-				console.log("core.init")
 				this.set_focus(); 
+				var jstree = this.get_container();
+				var setting = this._get_settings();
 				
 				// 기본값 false
-				if(this._get_settings().core.rtl) {
-					this.get_container().addClass("jstree-rtl").css("direction", "rtl");
+				if(setting.core.rtl) {
+					jstree.addClass("jstree-rtl").css("direction", "rtl");
 				}
-				//loading 상태의 node 생성
-				this.get_container().html("<ul><li class='jstree-last jstree-leaf'><ins>&#160;</ins><a class='jstree-loading' href='#'><ins class='jstree-icon'>&#160;</ins>" + this._get_string("loading") + "</a></li></ul>");
 				
+				//loading 상태의 node 생성
+				jstree.html("<ul><li class='jstree-last jstree-leaf'><ins>&#160;</ins><a class='jstree-loading' href='#'><ins class='jstree-icon'>&#160;</ins>" + this._get_string("loading") + "</a></li></ul>");
+				 
 				//node 높이
 				this.data.core.li_height = this.get_container_ul().find("li.jstree-closed, li.jstree-leaf").eq(0).height() || 18;
 				
 				// element 에 이벤트 추가
-				this.get_container().delegate(
+				jstree.delegate(
 					"li > ins", 
 					"click.jstree", 
 					$.proxy(function (event) {
@@ -598,6 +601,7 @@
 						}, this))
 					.bind("dblclick.jstree", function (event) { 
 						var sel;
+						//IE
 						if(document.selection && document.selection.empty) { 
 							document.selection.empty(); 
 						}else {
@@ -611,9 +615,9 @@
 						}
 					});
 				// notify_plugins 기본값 true
-				if(this._get_settings().core.notify_plugins) {
+				if(setting.core.notify_plugins) {
 					//load_node 함수 실행시 콜백
-					this.get_container().bind("load_node.jstree", $.proxy(function (e, data) { 
+					jstree.bind("load_node.jstree", $.proxy(function (e, data) { 
 								var o = this._get_node(data.rslt.obj),
 									t = this;
 								
@@ -640,8 +644,8 @@
 							}, this));
 				}
 				// load_open 기본값 false
-				if(this._get_settings().core.load_open) {
-					this.get_container().bind("load_node.jstree", $.proxy(function (e, data) { 
+				if(setting.core.load_open) {
+					jstree.bind("load_node.jstree", $.proxy(function (e, data) { 
 								var o = this._get_node(data.rslt.obj),
 									t = this;
 								
@@ -849,22 +853,18 @@
 				// 이미 focus 하고 있으면 리턴
 				if(this.is_focused()) { return; }
 				
-				/*
-				 * function () { return instances[focused_instance] || null; },
-				 * focus 하고 있는 instances 객체 가져오기
-				 */
+				//focused 되어 있는 jstree 객체 가져오기
 				var f = $.jstree._focused();
-				/*
-				 * instances 가 있으면 element 에 jstree-focused class 제거후 콜백함수 실행
-				 * focused_instance 변수 -1 변경
-				 */
+				
+				//focuse 되어 는 jstree 객체 focus 해제
 				if(f){ 
 					f.unset_focus(); 
 				}
 
-				// selector 가 선택한 element객체에 jstree-focused class 추가
+				// selector 한 jstree 객체에 focuse 추가
 				this.get_container().addClass("jstree-focused"); 
-				focused_instance = this.get_index(); 
+				focused_instance = this.get_index();
+				
 				this.__callback();
 			},
 			
