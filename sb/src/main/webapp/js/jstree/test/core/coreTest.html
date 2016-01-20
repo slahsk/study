@@ -16,49 +16,11 @@
 		<script type="text/javascript">
 		
 		$(document).ready(function(){
-			var tag = '<div id="demo">'+
-						'<ul>'+
-							'<li id="thtml1">'+
-								'<a href="#">Root node 1</a>'+
-								'<ul>'+
-									'<li id="thtml1_1">'+
-										'<a href="#">Child node 1_1</a>'+
-									'</li>'+
-									'<li id="thtml1_2">'+
-										'<a href="#">Child node 1_2</a>'+
-									'</li>'+
-								'</ul>'+
-							'</li>'+
-							'<li id="thtml2">'+
-								'<a href="#">Root node 2</a>'+
-								'<ul>'+
-									'<li id="thtml2_1">'+
-										'<a href="#">Child node 2_1</a>'+
-										'<ul>'+
-											'<li id= "thtml2_1_1">'+
-												'<a href="#">Child node 2_1_1</a>'+
-											'</li>'+
-											'<li id = "thtml2_1_2">'+
-												'<a href="#">Child node 2_1_2</a>'+
-											'</li>'+
-											'<li id = "thtml2_1_3">'+
-												'<a href="#">Child node 2_1_3</a>'+
-											'</li>'+
-										'</ul>'+
-									'</li>'+
-									'<li id="thtml2_2">'+
-										'<a href="#">Child node 2_2</a>'+
-									'</li>'+
-								'</ul>'+
-							'</li>'+
-						'</ul>'+
-					'</div>';
+					
 			/* ===================================================================================================================================== */
 			module("etc",{
 				beforeEach : function(){
-					this.jt =  $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt =  $("#demo").jstree();
 				}
 				
 			});
@@ -136,12 +98,37 @@
 				
 			});
 			
+			test("save_opened_Test",function(){
+				this.jt.jstree("open_node","#thtml1");
+				this.jt.jstree("open_node","#thtml2_1");
+				
+				this.jt.jstree("save_opened");
+				
+				var id = this.jt.data("jstree_instance_id");
+				var openNodeID = $.jstree._reference(id).data.core.to_open;
+				
+				equal(openNodeID[0],"#thtml1");
+				equal(openNodeID[1],"#thtml2");
+				equal(openNodeID[2],"#thtml2_1");
+				
+			});
+			
+			test("reopen_test",function(){
+				this.jt.jstree("open_node","#thtml1");
+				this.jt.jstree("save_opened");
+				this.jt.jstree("close_node","#thtml1");
+				
+				
+				this.jt.jstree("reopen");
+				ok(this.jt.find("#thtml1").hasClass("jstree-closed"));
+				
+				
+			});
+			
 			/* ===================================================================================================================================== */
 			module("clean",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt = $("#demo").jstree();
 					var node = $("<li/>").append($("<a/>").html("node"));
 					var ul = $("<ul/>")
 						.append(node.clone(true).addClass("jstree-open"))
@@ -193,9 +180,7 @@
 			/* ===================================================================================================================================== */
 			module("open and close",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});;
+					this.jt = $("#demo").jstree();
 					
 					this.node = $("<li/>")
 						.append($("<a/>").html("nodeName"))
@@ -241,12 +226,12 @@
 				
 				ok(this.node.hasClass("jstree-closed"));
 			});
+			
+		
 			/* ===================================================================================================================================== */
 			module("create",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt = $("#demo").jstree();
 					var node = $("<li/>").append($("<a/>").html("node"));
 				},
 				afterEach : function(){
@@ -383,9 +368,7 @@
 			/* ===================================================================================================================================== */
 			module("prepare",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt = $("#demo").jstree();
 				},
 				afterEach : function(){
 					
@@ -541,9 +524,7 @@
 			/* ===================================================================================================================================== */
 			module("move_node",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt = $("#demo").jstree();
 				}
 			});
 			
@@ -563,9 +544,7 @@
 			/* ===================================================================================================================================== */
 			module("event",{
 				beforeEach : function(){
-					this.jt = $(tag).jstree({ 
-						"core" : { "initially_open" : [ "thtml1_1" ] },
-					});
+					this.jt = $("#demo").jstree();
 				}
 			});
 			
@@ -590,13 +569,51 @@
 			});
 			
 			
-			
 		
 		});
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id="qunit-fixture"></div>
+		<div id="qunit-fixture">
+		<div id="demo">
+						<ul>
+							<li id="thtml1">
+								<a href="#">Root node 1</a>
+								<ul>
+									<li id="thtml1_1">
+										<a href="#">Child node 1_1</a>
+									</li>
+									<li id="thtml1_2">
+										<a href="#">Child node 1_2</a>
+									</li>
+								</ul>
+							</li>
+							<li id="thtml2">
+								<a href="#">Root node 2</a>
+								<ul>
+									<li id="thtml2_1">
+										<a href="#">Child node 2_1</a>
+										<ul>
+											<li id= "thtml2_1_1">
+												<a href="#">Child node 2_1_1</a>
+											</li>
+											<li id = "thtml2_1_2">
+												<a href="#">Child node 2_1_2</a>
+											</li>
+											<li id = "thtml2_1_3">
+												<a href="#">Child node 2_1_3</a>
+											</li>
+										</ul>
+									</li>
+										<li id="thtml2_2">
+										<a href="#">Child node 2_2</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+		
+		</div>
 	</body>
 </html>

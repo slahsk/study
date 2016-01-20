@@ -292,11 +292,11 @@
 				 * $.jstree._fn.init() 실행
 				 * setTimeout을 이용한 비동기 호출 
 				 */
-				setTimeout(function() { 
+				//setTimeout(function() { 
 					if(instances[instance_id]) { 
 						instances[instance_id].init(); 
 					} 
-				}, 0);
+			//	}, 0);
 				
 			});
 		}
@@ -364,7 +364,8 @@
 				defaults	: false
 			}, pdata);
 			plugins[pname] = pdata; 
-
+			
+			//plugin 의 기본 설정 데이터
 			$.jstree.defaults[pname] = pdata.defaults;
 			
 			
@@ -590,11 +591,10 @@
 				jstree.delegate(
 					"li > ins", 
 					"click.jstree", 
-					$.proxy(function (event) {
-						console.log("click");
-						var trgt = $(event.target);
-						this.toggle_node(trgt);// close open 변경
-					},this)
+					$.proxy(function (event){
+							var trgt = $(event.target);
+							this.toggle_node(trgt);// close open 변경
+						},this)
 					)
 					.bind("mousedown.jstree", $.proxy(function () { //마우스 클릭할때마다 발생
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
@@ -742,7 +742,14 @@
 				this.get_container_ul().find("li.jstree-open").each(function () { 
 					if(this.id) {
 						// id이름 넣기
-						_this.data.core.to_open.push("#" + this.id.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:")); 
+						_this.data.core.to_open.push("#" + this.id.toString()
+																.replace(/^#/,"")
+																.replace(/\\\//g,"/")
+																.replace(/\//g,"\\\/")
+																.replace(/\\\./g,".")
+																.replace(/\./g,"\\.")
+																.replace(/\:/g,"\\:")
+						); 
 					}
 				});
 				this.__callback(_this.data.core.to_open);
@@ -810,8 +817,7 @@
 			},
 			reopen : function () { 
 				var _this = this;
-				if(this.data.core.to_open.length) { // 사용자가 settion 준 값이나
-													// save_opened 함수 실행시 값저장
+				if(this.data.core.to_open.length) {
 					$.each(this.data.core.to_open, function (i, val) {
 						_this.open_node(val, false, true); 
 					});
@@ -1318,7 +1324,14 @@
 					// 문자 이면 a element 에 href 속성 추가
 					//html_titles 값에 따라 $.fn.html 또는 text 함수 실행
 					if(typeof m == "string") { 
-						nodeName.attr('href','#')[ coreSetting.html_titles ? "html" : "text" ](m); 
+						nodeName.attr('href','#');
+						
+						if(coreSetting.html_titles){
+							nodeName.html(m);
+						}else{
+							nodeName.text(m);
+						}
+						
 					}else {
 						if(!m.attr) { // attr 속성이 없으면 추가
 							m.attr = {}; 
@@ -1328,7 +1341,13 @@
 							m.attr.href = '#'; 
 						}
 						
-						nodeName.attr(m.attr)[ coreSetting.html_titles ? "html" : "text" ](m.title);
+						nodeName.attr(m.attr)
+						
+						if(coreSetting.html_titles){
+							nodeName.html(m.title);
+						}else{
+							nodeName.text(m.title);
+						}
 						
 						if(m.language) { 
 							nodeName.addClass(m.language); 
@@ -1355,7 +1374,6 @@
 				
 				function getLevelNodes(obj,position,data){
 					var nodes = null;
-					
 					switch(position) {
 						case "before":	obj.before(data); 
 										nodes = jstreeFn()._get_parent(obj); 
@@ -5757,15 +5775,13 @@
 			load_node : function (obj, s_call, e_call) { 
 				var _this = this;
 				
-				this.load_node_html(obj, function () { 
-					_this.__callback({ "obj" : _this._get_node(obj) 
-				});
-						
-				s_call.call(this);
-				
-				}, e_call);
-				
-				
+				this.load_node_html(
+						obj, 
+						function () { 
+							_this.__callback({ "obj" : _this._get_node(obj)});
+							s_call.call(this);
+						},
+						e_call);
 			},
 			_is_loaded : function (obj) { 
 				obj = this._get_node(obj); 
@@ -5798,26 +5814,35 @@
 								
 								if(obj == -1 || !obj) { //obj 가 없으면
 									//상위 노드 제거후 다시 삽입
-									this.get_container().children("ul").empty().append(d.children()).find("li, a").filter(function () {
+									this.get_container()
+										.children("ul")
+										.empty()
+										.append(d.children()).find("li, a").filter(function () {
 											//자식중 INS 태그가 아닌것
 											return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; 
-										}).prepend("<ins class='jstree-icon'>&#160;</ins>")//아이콘 앞에 삽입
+										})
+										.prepend("<ins class='jstree-icon'>&#160;</ins>")//아이콘 앞에 삽입
 										.end()
 										.filter("a")
 										.children("ins:first-child")
 										.not(".jstree-icon")
 										.addClass("jstree-icon"); //ins 태그중 class 없는것에 class 추가
 								}else { 
-									obj.children("a.jstree-loading").removeClass("jstree-loading");//jstree-loading 제거 
+									obj.children("a.jstree-loading")
+										.removeClass("jstree-loading");//jstree-loading 제거 
 									
-									obj.append(d).children("ul").find("li, a").filter(function () { 
-										return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; 
-									}).prepend("<ins class='jstree-icon'>&#160;</ins>")
-									.end()
-									.filter("a")
-									.children("ins:first-child")
-									.not(".jstree-icon")
-									.addClass("jstree-icon");
+									obj.append(d)
+										.children("ul")
+										.find("li, a")
+										.filter(function () { 
+											return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; 
+										})
+										.prepend("<ins class='jstree-icon'>&#160;</ins>")
+										.end()
+										.filter("a")
+										.children("ins:first-child")
+										.not(".jstree-icon")
+										.addClass("jstree-icon");
 									
 									obj.removeData("jstree_is_loading"); 
 								}
@@ -5829,14 +5854,17 @@
 								}
 							}else {
 								if(obj && obj !== -1) {
-									obj.children("a.jstree-loading").removeClass("jstree-loading");
+									obj.children("a.jstree-loading")
+										.removeClass("jstree-loading");
 									obj.removeData("jstree_is_loading");
+									
 									if(s.correct_state) { 
 										this.correct_state(obj);
 										if(s_call) { 
 											s_call.call(this); 
 										} 
 									}
+									
 								}else {
 									if(s.correct_state) { 
 										this.get_container().children("ul").empty();
@@ -5855,12 +5883,13 @@
 								.append(this.data.html_data.original_container_html)//본사했었든 노드 삽입
 								.find("li, a").filter(function () { 
 									return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; 
-									}).prepend("<ins class='jstree-icon'>&#160;</ins>")
-									.end()
-									.filter("a")
-									.children("ins:first-child")
-									.not(".jstree-icon")
-									.addClass("jstree-icon");
+								})
+								.prepend("<ins class='jstree-icon'>&#160;</ins>")
+								.end()
+								.filter("a")
+								.children("ins:first-child")
+								.not(".jstree-icon")
+								.addClass("jstree-icon");
 							
 							this.clean_node();
 						}
