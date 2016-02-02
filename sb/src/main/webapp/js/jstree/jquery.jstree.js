@@ -292,11 +292,11 @@
 				 * $.jstree._fn.init() 실행
 				 * setTimeout을 이용한 비동기 호출 
 				 */
-				//setTimeout(function() { 
+				setTimeout(function() { 
 					if(instances[instance_id]) { 
 						instances[instance_id].init(); 
 					} 
-			//	}, 0);
+				}, 0);
 				
 			});
 		}
@@ -764,8 +764,12 @@
 				if(!is_callback) {// is_callback : fasle
 					this.data.core.reopen = false; 
 					this.data.core.refreshing = true; 
-					this.data.core.to_open = $.map($.makeArray(this.data.core.to_open), function (n) { return "#" + n.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:"); });
-					this.data.core.to_load = $.map($.makeArray(this.data.core.to_load), function (n) { return "#" + n.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:"); });
+					this.data.core.to_open = $.map($.makeArray(this.data.core.to_open), function (n) { 
+						return "#" + n.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:"); 
+					});
+					this.data.core.to_load = $.map($.makeArray(this.data.core.to_load), function (n) { 
+						return "#" + n.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:"); 
+					});
 					if(this.data.core.to_open.length) {
 						this.data.core.to_load = this.data.core.to_load.concat(this.data.core.to_open);
 					}
