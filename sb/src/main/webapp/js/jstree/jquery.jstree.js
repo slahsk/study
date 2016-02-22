@@ -1871,14 +1871,27 @@
 	var scrollbar_width, e1, e2;
 	$(function() {
 		if (/msie/.test(navigator.userAgent.toLowerCase())) {
-			e1 = $('<textarea cols="10" rows="2"></textarea>').css({ position: 'absolute', top: -1000, left: 0 }).appendTo('body');
-			e2 = $('<textarea cols="10" rows="2" style="overflow: hidden;"></textarea>').css({ position: 'absolute', top: -1000, left: 0 }).appendTo('body');
+			e1 = $('<textarea/>')
+				.css({ position: 'absolute', top: -1000, left: 0 })
+				.attr({cols : 10, rows : 2})
+				.appendTo('body');
+			
+			e2 = $('<textarea/>')
+				.css({ position: 'absolute', top: -1000, left: 0, overflow: 'hidden'})
+				.attr({cols: 10, rows: 2})
+				.appendTo('body');
+			
 			scrollbar_width = e1.width() - e2.width();
 			e1.add(e2).remove();
 		} 
 		else {
-			e1 = $('<div />').css({ width: 100, height: 100, overflow: 'auto', position: 'absolute', top: -1000, left: 0 })
-					.prependTo('body').append('<div />').find('div').css({ width: '100%', height: 200 });
+			e1 = $('<div />')
+				.css({ width: 100, height: 100, overflow: 'auto', position: 'absolute', top: -1000, left: 0 })
+				.prependTo('body')
+				.append('<div />')
+				.find('div')
+				.css({ width: '100%', height: 200 });
+			
 			scrollbar_width = 100 - e1.width();
 			e1.parent().remove();
 		}
@@ -2024,32 +2037,38 @@
 				if(!obj.length) { 
 					return false; 
 				}
-				// if(this.data.ui.hovered && obj.get(0) ===
-				// this.data.ui.hovered.get(0)) { return; }
+				// if(this.data.ui.hovered && obj.get(0) === this.data.ui.hovered.get(0)) { return; }
+				
+				//node 에 hovered 안되어 있으면 기존에 되어 있는 hovered node 노드에 제거
 				if(!obj.hasClass("jstree-hovered")) { 
 					this.dehover_node(); 
 				}
 				
-				// node의 자식 a태그에 jstree-hovered 추가하고 바로위 부모 태그 값
+				// node의 자식 a태그에 jstree-hovered 추가하고 부모객체 변수에 할당
 				this.data.ui.hovered = obj.children("a").addClass("jstree-hovered").parent();
 				this._fix_scroll(obj);
 				this.__callback({ "obj" : obj });
 			},
 			dehover_node : function () {
-				var obj = this.data.ui.hovered, // hovered 되어 있는 li 객체 가져오기
-					p;
-				if(!obj || !obj.length) {// obj 없으면 리턴
+				var hoverNodeParent = this.data.ui.hovered, // hovered 되어 있는 li 객체 가져오기
+					nodeParent;
+				
+				if(!hoverNodeParent || !hoverNodeParent.length) {// obj 없으면 리턴
 					return false; 
 				}
 				
 				// hovered 제거
-				p = obj.children("a").removeClass("jstree-hovered").parent(); 
+				nodeParent = hoverNodeParent
+								.children("a")
+								.removeClass("jstree-hovered")
+								.parent(); 
 				
-				if(this.data.ui.hovered[0] === p[0]) {// 마지막 hovered 라면 null
+				//변수에 저장한 부모 노드 하고 hovered  제거한 노드 하고 같으면
+				if(this.data.ui.hovered[0] === nodeParent[0]) {
 					this.data.ui.hovered = null; 
 				}
 				
-				this.__callback({ "obj" : obj });
+				this.__callback({ "obj" : hoverNodeParent });
 			},
 			select_node : function (obj, check, e) {
 				obj = this._get_node(obj);
@@ -2059,18 +2078,44 @@
 				}
 				
 				var s = this._get_settings().ui,
-					is_multiple = (s.select_multiple_modifier == "on" || (s.select_multiple_modifier !== false && e && e[s.select_multiple_modifier + "Key"])),
-					is_range = (s.select_range_modifier !== false && e && e[s.select_range_modifier + "Key"] && this.data.ui.last_selected && this.data.ui.last_selected[0] !== obj[0] && this.data.ui.last_selected.parent()[0] === obj.parent()[0]),
+					is_multiple = (
+								s.select_multiple_modifier == "on" 
+								|| (
+									s.select_multiple_modifier!== false 
+									&& e 
+									&& e[s.select_multiple_modifier + "Key"]
+									)
+								),
+					is_range = (
+								s.select_range_modifier !== false 
+								&& e 
+								&& e[s.select_range_modifier + "Key"] 
+								&& this.data.ui.last_selected 
+								&& this.data.ui.last_selected[0] !== obj[0] 
+								&& this.data.ui.last_selected.parent()[0] === obj.parent()[0]
+								),
 					is_selected = this.is_selected(obj),
 					proceed = true,
 					t = this;
 				
 				if(check) {
-					if(s.disable_selecting_children && is_multiple && 
-						(
-							(obj.parentsUntil(".jstree","li").children("a.jstree-clicked").length) || // li a .jstree-clicked 개수
-							(obj.children("ul").find("a.jstree-clicked:eq(0)").length)// ul a .jstree-clicked 첫번째 개수
-						)
+					if(s.disable_selecting_children 
+						&& is_multiple 
+						&& 
+							(
+								(
+									obj
+									.parentsUntil(".jstree","li")
+									.children("a.jstree-clicked")
+									.length
+								) 
+								||(
+									obj
+									.children("ul")
+									.find("a.jstree-clicked:eq(0)")
+									.length
+								)
+							)
 					) { // if 시작
 						return false;
 					}
@@ -2082,16 +2127,20 @@
 						
 							// last_selected 인덱스가 크면 next
 							obj = obj[ obj.index() < this.data.ui.last_selected.index() ? "nextUntil" : "prevUntil" ](".jstree-last-selected").andSelf();
+							
 							if(s.select_limit == -1 || obj.length < s.select_limit) {
 								this.data.ui.last_selected.removeClass("jstree-last-selected");
+								
 								this.data.ui.selected.each(function () {
 									if(this !== t.data.ui.last_selected[0]) { t.deselect_node(this); }
 								});
+								
 								is_selected = false;
 								proceed = true;
 							}else {
 								proceed = false;
 							}
+							
 							break;
 						case (is_selected && !is_multiple): // 선택되어 있고 멀티선택이 아니라면
 							this.deselect_all(); // 모두 선택 해제
@@ -2114,15 +2163,19 @@
 							if(s.select_limit == -1 || this.data.ui.selected.length + 1 <= s.select_limit) { 
 								proceed = true;
 							}
+						
 							break;
 					}
-				}
+				}//end if
+				
 				if(proceed && !is_selected) {
+					 
 					if(!is_range) { 
 						this.data.ui.last_selected = obj; // li 객체 set
 					}
 					// li > a 태그에 jstree-clicked 추가
-					obj.children("a").addClass("jstree-clicked"); 
+					obj.children("a").addClass("jstree-clicked");
+					
 					if(s.selected_parent_open) {// 부모가 open 되어 있으면
 						// 부모중 closed 되어 있으면 open
 						obj.parents(".jstree-closed").each(function () { 
@@ -2138,7 +2191,7 @@
 					this.__callback({ "obj" : obj, "e" : e });
 				}
 			},
-			_fix_scroll : function (obj) { // 아아아아아아 계산하기 싫다......
+			_fix_scroll : function (obj) { 
 				var c = this.get_container()[0], // div
 					t;
 				// scrollHeight === height, offsetHeight === height + border
@@ -2318,8 +2371,9 @@
 				});
 			},
 			create : function (obj, position, js, callback, skip_rename) {
-				var t, _this = this;
-				obj = this._get_node(obj); // li 객체
+				var t, 
+					_this = this;
+					obj = this._get_node(obj); // li 객체
 				
 				if(!obj) { 
 					obj = -1; 
@@ -2332,8 +2386,8 @@
 					var p = this._get_parent(t), // 부모 노드
 						pos = $(t).index();
 					
-					if(callback) { // 왜 있는지 모르겠음 실행하면 오류
-						allback.call(this, t);  
+					if(callback) {
+						callback.call(this, t);  
 					}
 					
 					// close 되어 있으면 open
@@ -2341,7 +2395,7 @@
 						this.open_node(p, false, true); 
 					}
 					
-					if(!skip_rename) { // node 이름 변경 할수 있게 이벤트 분기
+					if(!skip_rename) { 
 						// t : 새로 생성된 node
 						this._show_input(t, function (obj, new_name, old_name) { 
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });

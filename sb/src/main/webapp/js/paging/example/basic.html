@@ -1,0 +1,79 @@
+
+<!-- http://www.xarg.org/2011/09/jquery-pagination-revised/ -->
+
+<html>
+
+	<head>
+	<title>jQuery Paging Test</title>
+	<style>
+		a {
+			margin: 2px
+		}
+		div.pagination {
+			padding: 3px;
+			margin: 3px;
+			text-align:center;
+		}
+
+		div.pagination a {
+			border: 1px solid #dedfde;
+			margin-right:3px;
+			padding:2px 6px;
+	
+			background-position:bottom;
+			text-decoration: none;
+	
+			color: #0061de;
+		}
+		div.pagination a:hover, div.meneame a:active {
+			border: 1px solid #000;
+			background-image:none;
+			background-color:#0061de;
+			color: #fff;
+		}
+		div.pagination span.current {
+			margin-right:3px;
+			padding:2px 6px;
+	
+			font-weight: bold;
+			color: #ff0084;
+		}
+		div.pagination span.disabled {
+			margin-right:3px;
+			padding:2px 6px;
+	
+			color: #adaaad;
+		}¾È·¦ ´ë¸® ¿¬ºÀ
+	</style>
+	</head>
+
+	<body>
+		<div id="pagination" class="pagination"></div>
+
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="../jquery.paging.min.js"></script>
+		<script>
+			$("#pagination").paging(1337, {
+				format: '[< ncnnn >]',
+				onSelect: function(page) {
+					// add code which gets executed when user selects a page
+				},
+				onFormat: function(type) {
+					switch (type) {
+					case 'block': // n and c
+						return '<a href="#">' + this.value + '</a>';
+					case 'next': // >
+						return '<a href="#">&gt;</a>';
+					case 'prev': // <
+						return '<a href="#">&lt;</a>';
+					case 'first': // [
+						return '<a href="#">first</a>';
+					case 'last': // ]
+						return '<a href="#">last</a>';
+					}
+				}
+			});
+
+		</script>
+	</body>
+</html>
