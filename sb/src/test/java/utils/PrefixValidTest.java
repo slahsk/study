@@ -66,44 +66,44 @@ public class PrefixValidTest {
 	
 	@Test
 	public void firstPrefix(){
-		assertEquals(prefixValid.allCheck(vo.get(0)), true);
+		assertEquals(prefixValid.allCheckObject(vo.get(0)), true);
 	}
 	@Test
 	public void valueString(){
-		assertEquals(prefixValid.allCheck(vo.get(1)), false);
+		assertEquals(prefixValid.allCheckObject(vo.get(1)), false);
 	}
 	@Test
 	public void endPrefix(){
-		assertEquals(prefixValid.allCheck(vo.get(3)), false);
+		assertEquals(prefixValid.allCheckObject(vo.get(3)), false);
 	}
 	@Test
 	public void middlePrefix(){
-		assertEquals(prefixValid.allCheck(vo.get(2)), false);
+		assertEquals(prefixValid.allCheckObject(vo.get(2)), false);
 	}
 	@Test
 	public void firstAndEndPrefix(){
-		assertEquals(prefixValid.allCheck(vo.get(4)), true);
+		assertEquals(prefixValid.allCheckObject(vo.get(4)), true);
 	}
 	
 	@Test
 	public void parentFirstPrefix(){
-		assertEquals(prefixValid.allCheck(parent.get(0)), true);
+		assertEquals(prefixValid.allCheckObject(parent.get(0)), true);
 	}
 	@Test
 	public void parentNonePrefix(){ 
-		assertEquals(prefixValid.allCheck(parent.get(1)), false);
+		assertEquals(prefixValid.allCheckObject(parent.get(1)), false);
 	}
 	@Test
 	public void parentMiddlePrefix(){
-		assertEquals(prefixValid.allCheck(parent.get(2)), false);
+		assertEquals(prefixValid.allCheckObject(parent.get(2)), false);
 	}
 	@Test 
 	public void parentEndPrefix(){
-		assertEquals(prefixValid.allCheck(parent.get(3)), false);
+		assertEquals(prefixValid.allCheckObject(parent.get(3)), false);
 	}
 	@Test
 	public void parentFirstAndEndPrefix(){
-		assertEquals(prefixValid.allCheck(parent.get(4)), true);
+		assertEquals(prefixValid.allCheckObject(parent.get(4)), true);
 	}
 	
 	@Test
@@ -112,7 +112,7 @@ public class PrefixValidTest {
 		 vo1.setCbNo("~test1");
 		 vo1.setAsNo("test2");
 		 vo1.setSmNo("~test3"); 
-		 TestVo2 returnVo = prefixValid.replacePrefix(vo1);
+		 TestVo2 returnVo = prefixValid.replaceObject(vo1);
 		 assertEquals(returnVo.getSmNo(),"test3"); 
 	}
 	
@@ -126,7 +126,7 @@ public class PrefixValidTest {
 		 grid.setAsNo("test2");
 		 
 		 
-		 prefixValid.setGridDataToDbData(grid, db);
+		 prefixValid.combine(grid, db);
 		 
 		 assertEquals(grid.getCbNo(),"test1");
 		 assertEquals(grid.getAsNo(),"test2");

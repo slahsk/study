@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PrefixValid <T>{
+public class PrefixValid <T> implements ObjectFieldValid<T>, DataCombine<T>{
 	static Logger log = Logger.getLogger(PrefixValid.class);
 	
 	private final static String PREFIX = "~";
@@ -18,7 +18,8 @@ public class PrefixValid <T>{
 	 * @param object
 	 * @return
 	 */
-	public  boolean allCheck(Object object){
+	@Override
+	public  boolean allCheckObject(Object object){
 		boolean isPrefix =  false;
 		
 		Class<?> clazz = object.getClass();
@@ -106,7 +107,8 @@ public class PrefixValid <T>{
 	 * @param client 
 	 * @param server
 	 */
-	public void setGridDataToDbData(T client,T server){
+	@Override
+	public void combine(T client,T server){
 		Class<?> clazz = server.getClass();
 		
 		while(true){
@@ -149,7 +151,8 @@ public class PrefixValid <T>{
 	 * @param object
 	 * @return
 	 */
-	public T replacePrefix(T object){
+	@Override
+	public T replaceObject(T object){
 		Class<?> clazz = object.getClass();
 		
 		while(true){
