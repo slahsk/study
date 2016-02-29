@@ -1868,7 +1868,10 @@
  * selecting/deselecting/hovering/dehovering nodes
  */
 (function ($) {
-	var scrollbar_width, e1, e2;
+	var scrollbar_width, 
+		e1, 
+		e2;
+	
 	$(function() {
 		if (/msie/.test(navigator.userAgent.toLowerCase())) {
 			e1 = $('<textarea/>')
@@ -1896,6 +1899,7 @@
 			e1.parent().remove();
 		}
 	});
+	
 	$.jstree.plugin("ui", {
 		__init : function () { 
 			this.data.ui.selected = $(); 
@@ -2015,6 +2019,7 @@
 			reselect : function () {
 				var _this = this,
 					s = this.data.ui.to_select;
+				
 				s = $.map($.makeArray(s), function (n) { 
 						return "#" + n.toString().replace(/^#/,"").replace(/\\\//g,"/").replace(/\//g,"\\\/").replace(/\\\./g,".").replace(/\./g,"\\.").replace(/\:/g,"\\:"); 
 					});
@@ -2085,15 +2090,15 @@
 									&& e 
 									&& e[s.select_multiple_modifier + "Key"]
 									)
-								),
+								), //select_multiple_modifier setting 값 검사
 					is_range = (
 								s.select_range_modifier !== false 
 								&& e 
-								&& e[s.select_range_modifier + "Key"] 
-								&& this.data.ui.last_selected 
-								&& this.data.ui.last_selected[0] !== obj[0] 
-								&& this.data.ui.last_selected.parent()[0] === obj.parent()[0]
-								),
+								&& e[s.select_range_modifier + "Key"] //event 발생때 key 누름 값 검사
+								&& this.data.ui.last_selected
+								&& this.data.ui.last_selected[0] !== obj[0] //last_selected 같은 노드인지 비교 
+								&& this.data.ui.last_selected.parent()[0] === obj.parent()[0] // last_selected 부모 노드가 같은지 비교
+								),//select_range_modifier setting 값 검사
 					is_selected = this.is_selected(obj),
 					proceed = true,
 					t = this;

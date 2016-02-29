@@ -14,18 +14,31 @@
 		
 		
 		<script type="text/javascript">
+		
 			$(document).ready(function(){
-				$("#demo").jstree({ 
-					"ui" : {
-						"select_limit" : 2,
-						"selected_parent_close" : "select_parent"
-					},
-					"plugins" : [ "themes", "html_data", "ui" ]
+				
+				module("event",{
+					beforeEach : function(){
+						this.jt = $("#demo").jstree({ 
+							"ui" : {
+								"select_limit" : 2,
+								"selected_parent_close" : "select_parent"
+							},
+							"plugins" : [ "themes", "html_data", "ui" ]
+						});
+					}
 				});
-				test("test",function(){
-					ok(1);
+				
+				test("nodeClick",function(){
+					var spy = sinon.spy($.jstree._fn,"select_node");
+					this.jt.jstree("init");
+					this.jt.find("#thtml1_1 > a").trigger("click");
+					
+					ok(spy.called);
+					
+					$.jstree._fn.select_node.restore();
 				});
-			
+				
 			});
 		</script>
 	</head>
