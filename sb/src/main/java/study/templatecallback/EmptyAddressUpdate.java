@@ -2,6 +2,8 @@ package study.templatecallback;
 
 import java.util.List;
 
+import study.TestVO;
+
 public class EmptyAddressUpdate implements MyCallBack<TestVO>{
 
 	@Override

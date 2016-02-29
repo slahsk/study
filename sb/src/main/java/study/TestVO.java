@@ -1,4 +1,4 @@
-package study.templatecallback;
+package study;
 
 public class TestVO {
 	private String name;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import study.TestVO;
+
 
 public class MyService implements CommonService<TestVO> {
 	
