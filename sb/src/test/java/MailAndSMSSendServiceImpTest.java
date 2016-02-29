@@ -19,17 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import skp.bss.msg.rms.front.vo.MultiRequestVo;
-import skp.common.email.vo.CommonEmailVO;
-import skp.picm.common.webservice.service.SMSSenderWebService;
-import skp.tms.common.email.service.TmsCommonEmailService;
-import skp.tms.fm.snd.msg.service.MailAndSMSSendServiceImp;
-import skp.tms.fm.snd.msg.service.TmsFmSndMsgService;
-import skp.tms.fm.snd.msg.vo.TmsFmSndMsgSessionVO;
-import skp.tms.fm.snd.msg.vo.TmsFmSndMsgVO;
-
-import com.picm.common.model.AbstractModel;
-import com.picm.common.session.service.SessionServiceIf;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 /*@ContextConfiguration(locations={
@@ -43,7 +32,7 @@ import com.picm.common.session.service.SessionServiceIf;
 @Transactional*/
 @RunWith(MockitoJUnitRunner.class)
 public class MailAndSMSSendServiceImpTest {
-	
+	/*
 	@InjectMocks
 	MailAndSMSSendServiceImp mailAndSMSSendService;
 	
@@ -248,5 +237,5 @@ public class MailAndSMSSendServiceImpTest {
 		assertEquals(map.get("result"),"2");
 		assertEquals(map.get("msg"),"전송중 시스템 장애가 발생하여( SMS전송 : 성공, 메일전송 : 실패 )하였습니다.");
 	}
-	
+	*/
 }
