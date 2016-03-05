@@ -8,7 +8,7 @@
 	<script type="text/javascript">
 	
 		
-	
+	/* 
 		angular.module("myapp",[])
 			.controller("todoCtrl",function($scope){
 				var todoList = [
@@ -45,18 +45,24 @@
 					
 					return remainCount;
 				}
-			});
+			}); */
+			
+			
+			function todoCtrl(){
+				console.log("test");
+			}
 	</script>
 </head>
-<body class="well" ng-controller = "todoCtrl">
+<body class="well" data-ng-controller = "todoCtrl">
 	<h1>{{appName}}</h1>
 	<p>
-		전체 할 일 <strong>{{todoList.length}}</strong>개 / 남은 할일은 <strong>{{remain()}}</strong>개
-		[<a href="" ng-click="archive()">보관하기</a>]
+	
+	16m	전체 할 일 <strong>{{todoList.length}}</strong>개 / 남은 할일은 <strong>{{remain()}}</strong>개
+		[<a href="" data-ng-click="archive()">보관하기</a>]
 	</p>
 	<ul class="list-unstyled">
-		<li ng-repeat="todo in todoList" class="checkbox" >
-			<input type="checkbox" ng-model="todo.done">{{todo.title}}
+		<li data-ng-repeat="todo in todoList" class="checkbox" >
+			<input type="checkbox" data-ng-model="todo.done">{{todo.title}}
 		</li>
 	</ul>
 	
@@ -65,9 +71,9 @@
 			<label class="sr-only" for="newItemText">
 				새로운 할 일
 			</label>
-			<input type="text" class="form-control" name="newItemText" placeholder="새로운 할 일" ng-model="newTitle">
+			<input type="text" class="form-control" name="newItemText" placeholder="새로운 할 일" data-ng-model="newTitle">
 		</div>
-		<button type="button" class="btn btn-default" ng-click="addNewTodo(newTitle)">
+		<button type="button" class="btn btn-default" data-ng-click="addNewTodo(newTitle)">
 			추가
 		</button>
 	</form>
