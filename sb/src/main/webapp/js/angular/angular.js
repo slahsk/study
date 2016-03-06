@@ -4417,7 +4417,7 @@ function createInjector(modulesToLoad, strictDi) {
     assertArg(isUndefined(modulesToLoad) || isArray(modulesToLoad), 'modulesToLoad', 'not an array');
     var runBlocks = [], moduleFn;
     forEach(modulesToLoad, function(module) {
-      if (loadedModules.get(module)) return;
+      if (loadedModules.get(module)) return; //map
       loadedModules.put(module, true);
 
       function runInvokeQueue(queue) {

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app = "myapp">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+	<script type="text/javascript" src="../angular.js"></script>
+	<script type="text/javascript">
+		angular.module("myapp",[])
+			.controller("class",function($scope){
+				$scope.fruitList = ["apple","banana","tomato","lemon","grape"];
+			});
+	</script>
+	<style type="text/css">
+		.apple {
+			background-color: red;
+		}
+		
+		.lemon {
+			background-color: yellow;
+		}
+		
+		.even {
+			background-color: blue;
+		}
+	</style>
+</head>
+<body ng-controller="class">
+	<div>
+		<ul>
+			<li ng-repeat="fruit in fruitList" ng-class="'{{fruit}}'">
+				{{fruit}}
+			</li>
+		</ul>
+		<ul>
+			<li ng-repeat="fruit in fruitList" ng-class="{'even' : {{$index%2==0}} }">
+				{{fruit}}
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
