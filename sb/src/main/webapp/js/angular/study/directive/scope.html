@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="sampleApp">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+	<script type="text/javascript" src="../../angular.js"></script>
+	<script type="text/javascript">
+		angular.module("sampleApp",[])
+			.controller("demo",function($scope){
+				$scope.name = "ctrl 에서 사용된 name 모델"
+			})
+			.directive("hello",function(){
+				return{
+					templateUrl : "template/helloTmpl.html",
+					restrict : "AE",
+					scope : true,
+					controller: function($scope, $element, $attrs, $transclude){
+						if($attrs.name){
+							$scope.name = $attrs.name;
+						}
+					}
+				};
+			})
+			.directive("hi",function(){
+				return{
+					templateUrl : "template/helloTmpl.html",
+					restrict : "AE",
+					scope : {name : "@to"}
+				}
+			});
+	</script>
+</head>
+<body ng-controller="demo">
+	<div hello name="google"></div>
+	<div hello name="naver"></div>
+	<div hello></div>
+	<br>
+	<div hi to="google"></div>
+	<div hi to="naver"></div>
+	<div hi></div>
+	
+</body>
+</html>
