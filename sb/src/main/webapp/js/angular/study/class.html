@@ -6,9 +6,9 @@
 	<script type="text/javascript" src="../angular.js"></script>
 	<script type="text/javascript">
 		angular.module("myapp",[])
-			.controller("class",function($scope){
-				$scope.fruitList = ["apple","banana","tomato","lemon","grape"];
-			});
+			.controller("class",["$scope",function(aa){
+				aa.fruitList = ["apple","banana","tomato","lemon","grape"];
+			}]);
 	</script>
 	<style type="text/css">
 		.apple {
