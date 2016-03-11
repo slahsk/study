@@ -7,7 +7,13 @@
 	<script type="text/javascript">
 		angular.module("sampleApp",[])
 			.controller("demo",function($scope){
-				$scope.name = "ctrl 에서 사용된 name 모델"
+				$scope.name = "ctrl 에서 사용된 name 모델";
+				
+				$scope.helloList = [{name:"google"},{name:"naver"},{name:"angular"}];
+				
+				$scope.sendMessage = function(toSb){
+					console.log(toSb + "에게 메시지를 보낸다.");
+				}
 			})
 			.directive("hello",function(){
 				return{
@@ -27,6 +33,25 @@
 					restrict : "AE",
 					scope : {name : "@to"}
 				}
+			})
+			.directive("hi2",function(){
+				return{
+					templateUrl : "template/helloTmpl2.html",
+					restrict : "AE",
+					scope : {
+						name : "@to",
+						send : "&"
+					}
+				}
+			})
+			.directive("hi3",function(){
+				return{
+					templateUrl : "template/helloTmpl3.html",
+					restrict : "AE",
+					scope : {
+						name : "=to",
+					}
+				}
 			});
 	</script>
 </head>
@@ -39,5 +64,15 @@
 	<div hi to="naver"></div>
 	<div hi></div>
 	
+	<div ng-repeat = "helloSb in helloList" hi2 to="{{}helloSb.name}" send="sendMessage(helloSb.name)"></div>
+	
+	<ul>
+		<li ng-repeat="helloSb in helloList">
+			<input type="text" ng-model="helloSb.name">
+		</li>
+	</ul>
+	<div ng-repeat = "helloSb in helloList" hi3 to ="helloSb.name">
+	
+	</div>
 </body>
 </html>
