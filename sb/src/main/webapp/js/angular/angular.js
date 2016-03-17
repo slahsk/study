@@ -8241,8 +8241,15 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       }
 
       function nodeLinkFn(childLinkFn, scope, linkNode, $rootElement, boundTranscludeFn) {
-        var linkFn, isolateScope, controllerScope, elementControllers, transcludeFn, $element,
-            attrs, removeScopeBindingWatches, removeControllerBindingWatches;
+        var linkFn, 
+        	isolateScope, 
+        	controllerScope, 
+        	elementControllers, 
+        	transcludeFn, 
+        	$element,
+            attrs, 
+            removeScopeBindingWatches, 
+            removeControllerBindingWatches;
 
         if (compileNode === linkNode) {
           attrs = templateAttrs;
