@@ -6,7 +6,7 @@
 	<script type="text/javascript" src="../../angular.js"></script>
 	<script type="text/javascript">
 		angular.module("sampleApp",[])
-			.controller("demo",function($scope){
+			.controller("parent",function($scope){
 				$scope.name = "ctrl 에서 사용된 name 모델";
 				
 				$scope.helloList = [{name:"google"},{name:"naver"},{name:"angular"}];
@@ -27,13 +27,18 @@
 					}
 				};
 			})
+			//독립된 scope를 사용하므로 부모 scope의 name속성을 상속받지 않는다
 			.directive("hi",function(){
 				return{
 					templateUrl : "template/helloTmpl.html",
 					restrict : "AE",
-					scope : {name : "@to"}
+					scope : {name : "@to"},
+					controller : function($scope){
+						console.log("test");
+					}
 				}
 			})
+			//부모 scope의 환경에서 실행될 수 있는 표현식에 대한 레퍼런스를 가지고 올수 있다.
 			.directive("hi2",function(){
 				return{
 					templateUrl : "template/helloTmpl2.html",
@@ -41,9 +46,13 @@
 					scope : {
 						name : "@to",
 						send : "&"
+					},
+					controller : function($scope){
+						console.log("test");
 					}
 				}
 			})
+			//부모 scope의 특정 속성과 지시자 내부 scope의 속성관 양방향 데이터 바인딩 한다.
 			.directive("hi3",function(){
 				return{
 					templateUrl : "template/helloTmpl3.html",
@@ -55,22 +64,26 @@
 			});
 	</script>
 </head>
-<body ng-controller="demo">
+<body ng-controller="parent">
 	<div hello name="google"></div>
 	<div hello name="naver"></div>
 	<div hello></div>
 	<br>
+	
 	<div hi to="google"></div>
 	<div hi to="naver"></div>
 	<div hi></div>
 	
-	<div ng-repeat = "helloSb in helloList" hi2 to="{{}helloSb.name}" send="sendMessage(helloSb.name)"></div>
+	<br>
+	<div ng-repeat = "helloSb in helloList" hi2 to="{{helloSb.name}}" send="sendMessage(helloSb.name)"></div>
 	
+	<br>
 	<ul>
-		<li ng-repeat="helloSb in helloList">
+		<li ng-repeat="helloSb in helloList"> 
 			<input type="text" ng-model="helloSb.name">
 		</li>
 	</ul>
+	
 	<div ng-repeat = "helloSb in helloList" hi3 to ="helloSb.name">
 	
 	</div>
