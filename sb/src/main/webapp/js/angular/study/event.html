@@ -20,7 +20,7 @@
 		angular.module("myapp",[])
 			.controller("main",function($scope){
 				$scope.broadcast = function(noticeMsg){
-					$scope.$broadcast("chat:noticeMsg",noticeMsg); //현재 scope 이벤트발생
+					$scope.$broadcast("chat:noticeMsg",noticeMsg); //하위 scope 이벤트발생
 					$scope.noticeMsg = "";
 				}
 			})

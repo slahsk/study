@@ -8,9 +8,12 @@
 	<script type="text/javascript" src="./filters/testFilter.js"></script>
 	<script type="text/javascript">
 		angular.module("myapp",["myapp.testController","myapp.testFilter"])
+			.controller("demo",["$scope","myfilter",function($scope,myfilter){
+				console.log(myfilter.test);
+			}]);
 	</script>
 </head>
-<body>
+<body ng-controller="demo">
 
 </body>
 </html>

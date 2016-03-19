@@ -27,13 +27,20 @@
 					}
 				};
 			})
+			//독립된 scope를 사용하므로 부모 scope의 name속성을 상속받지 않는다
+			//@를 이용해 연결된 DOM속성값에 표현식(@)을 사용하여 부모 scope값을 전달할 수 있다.
+			//독립된 scope 에서 특정 속성을 부모에게 받아 올 수 있다.
 			.directive("hi",function(){
 				return{
 					templateUrl : "template/helloTmpl.html",
 					restrict : "AE",
-					scope : {name : "@to"}
+					scope : {name : "@to"},
+					controller : function($scope){
+						console.log("test");
+					}
 				}
 			})
+			//부모 scope의 환경에서 실행될 수 있는 표현식에 대한 레퍼런스를 가지고 올수 있다.
 			.directive("hi2",function(){
 				return{
 					templateUrl : "template/helloTmpl2.html",
@@ -41,9 +48,13 @@
 					scope : {
 						name : "@to",
 						send : "&"
+					},
+					controller : function($scope){
+						console.log("test");
 					}
 				}
 			})
+			//부모 scope의 특정 속성과 지시자 내부 scope의 속성관 양방향 데이터 바인딩 한다.
 			.directive("hi3",function(){
 				return{
 					templateUrl : "template/helloTmpl3.html",
@@ -60,12 +71,13 @@
 	<div hello name="naver"></div>
 	<div hello></div>
 	<br>
+	
 	<div hi to="google"></div>
 	<div hi to="naver"></div>
 	<div hi></div>
 	
-	<div ng-repeat = "helloSb in helloList" hi2 to="{{}helloSb.name}" send="sendMessage(helloSb.name)"></div>
-	
+	<br>
+	<div ng-repeat = "helloSb in helloList" hi2 to="{{helloSb.name}}" send="sendMessage(helloSb.name)"></div>
 	<ul>
 		<li ng-repeat="helloSb in helloList">
 			<input type="text" ng-model="helloSb.name">
