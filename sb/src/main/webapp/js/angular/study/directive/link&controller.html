@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../../angular.js"></script>
+<script type="text/javascript">
+
+	angular.module('greetings', [])
+	.directive("welcome", function() {
+	  return {
+	    restrict: "E",
+	    controller: function($scope) {
+	      $scope.words = [];
+	
+	      this.sayHello = function() {
+	        $scope.words.push("hello");
+	      };
+	
+	      this.sayHowdy = function() {
+	        $scope.words.push("howdy");
+	      };
+	
+	      this.sayHi = function() {
+	        $scope.words.push("hi");
+	      };
+	    },
+	
+	    link: function(scope, element){
+	      element.bind("mouseenter", function() {
+	        console.log(scope.words);
+	      });
+	    }
+	  }
+	})
+	.directive("hello", function() {
+		  return {
+		    require: "welcome",
+		    link: function (scope, element, attrs, welcomeCtrl) {
+		      welcomeCtrl.sayHowdy();
+		    },
+		    controller : function($scope){
+		    	console.log($scope	);
+		    }
+		  };
+		 })
+	.directive("howdy", function() {
+	  return {
+	    require: "welcome",
+	    link: function (scope, element, attrs, welcomeCtrl) {
+	      welcomeCtrl.sayHowdy();
+	    }
+	  };
+	 })
+	
+	.directive("hi", function() {
+	  return {
+	    require: "welcome",
+	    link: function (scope, element, attrs, welcomeCtrl) {
+	      welcomeCtrl.sayHi();
+	    }
+	  };
+	 });
+</script>
+</head>
+<body ng-app="greetings">
+  <welcome hello howdy hi>Say something!</welcome>
+</body>
+</body>
+</html>
