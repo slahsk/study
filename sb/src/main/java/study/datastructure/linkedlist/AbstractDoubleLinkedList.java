@@ -1,6 +1,6 @@
 package study.datastructure.linkedlist;
 
-public abstract class AbstractDoubleLinkedList extends AbstractLinkedList implements DoubleLinkedList {
+public abstract class AbstractDoubleLinkedList extends AbstractLinkedList {
 	private LinkedList previous;
 	
 	public AbstractDoubleLinkedList(int date) {
