@@ -1,6 +1,1 @@
-나혼자 공부 할꺼야
-
-
-심심하시면 slahsk@naver.com 여기로 메일 보내주세요.
-
-그냥 메일은 읽어 주겠어요.
+spring boot, javascript, angular, d3, jquery 등등 개인적으로 공부하기 위한 프로젝트
