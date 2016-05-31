@@ -232,7 +232,7 @@ var GRAPH = {};
 			var pmInfoData = {};
 			$.ajax({
 				type : 'POST',
-				url : '/common/perform/getGraphSplunkDomainList.json',
+				url : '',
 				dataType : "json",
 				data : {
 					'splunkDomain' : param
