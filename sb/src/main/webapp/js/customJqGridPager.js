@@ -1,3 +1,13 @@
+
+var GRID = {};
+
+(function(grid){
+	//유틸
+	$.extend(grid,{
+		getCheckedRow : function(id){
+			return $(id).jqGrid('getGridParam', 'selarrrow');
+		},
+		pager : function(id,grid){
 			var tag = '<table class="ui-pg-table" style="margin: 0 auto;">'+
 			'<tbody>'+
 				'<tr>'+
@@ -183,3 +193,59 @@
 				$(id).find(".page-last").html(totalPage);
 			});
 			
+		}
+	});
+	
+	//그리드 
+	$.extend(grid,{
+		draw : function(target,settingOptions){
+			var defaultOptions = {
+				autowidth : true,
+				rownumbers : false,
+				scroll : false,
+				multiselect : false,
+				multiselectWidth: 40,
+				footerrow : false,
+				userDataOnFooter : false,
+				page : 1,
+				datatype : "json",
+				rownumWidth: 60,
+				hoverrows:false,
+				cmTemplate: { sortable: false },
+				width : '100%',
+				shrinkToFit : true,
+				mtype: 'POST',
+				height:"auto",
+				jsonReader : {
+					root: "rows"
+				}
+			};
+			
+			
+			function DefaultLoadComplete(){
+		
+			}
+			
+			
+			var gridOptions =  $.extend({},defaultOptions,settingOptions);
+			
+			gridOptions.loadComplete = function(data){
+				DefaultLoadComplete.call(this,data);
+				if(settingOptions.loadComplete){
+					settingOptions.loadComplete.call(this,data);
+				}
+				$(this).trigger("setPageLast");
+			};
+			
+			delete gridOptions.pager;
+			if(settingOptions.pager){
+				GRID.pager(settingOptions.pager,target);
+			}
+			
+			$(target).jqGrid(gridOptions);
+			
+		
+		}
+	});
+	
+}(GRID));
