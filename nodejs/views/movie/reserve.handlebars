@@ -1,0 +1,103 @@
+<style>
+	table tr td {
+		background-color:red;
+		width : 100px;
+		height : 50px;
+	}
+</style>
+<script>
+	$(document).ready(function(){
+	
+		$("table tr").each(function(y){
+			$(this).find("td").each(function(x){
+				$(this)
+				.data({
+					x : x+1,
+					y : y+1,
+					reserve : false
+				})
+				.html("좌표("+(y+1)+","+(x+1)+")" );
+			});
+		});
+	
+		$("table  tr  td").click(function(){
+			var x = $(this).index()+1;
+			var y = $(this).parent().index()+1;
+		
+			console.log("x:" + x);
+			console.log("y:" + y);
+			
+			var color = $(this).css("background-color");
+			if(color === "rgb(255, 0, 0)"){
+				$(this).data({reserve : true});
+				$(this).css("background-color","yellow");
+			}else{
+				$(this).data({reserve : false});
+				$(this).css("background-color","red");
+			}
+		});
+	
+		$("#save").click(function(){
+			var result = [];
+			$("td").each(function(i, val){
+			
+				if($(this).data("reserve") === true){
+					result.push({
+						seat : $(this).data("x") + "," + $(this).data("y"),
+						date : new Date()
+					});
+				}
+			});
+			$.ajax({
+				url : "/movie/save",
+				method : "POST",
+				contentType: 'application/json',
+				data : JSON.stringify(result)
+			})
+			.done(function(data){
+				console.log(data);
+			});
+			
+		});
+	});
+</script>
+<table>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+
+</table>
+
+<button id="save">저장</button>
