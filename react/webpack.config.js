@@ -1,8 +1,11 @@
+var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
   entry : __dirname + "/app/main.js",
   devtool : 'dval-source-map',
   output : {
-    path : __dirname + "/public",
+    path : __dirname + "/build",
     filename : "bundle.js"
   },
   module : {
@@ -25,6 +28,12 @@ module.exports = {
   },
   postcss:[
     require('autoprefixer')
+  ],
+  plugins : [
+    new webpack.BannerPlugin("cacacapipipipi"),
+    new HtmlWebpackPlugin({
+      template : __dirname + "/app/index.tmpl.html"
+    })
   ],
   devServer : {
     contentBase : "./public",
