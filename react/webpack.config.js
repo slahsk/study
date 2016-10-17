@@ -1,6 +1,6 @@
 module.exports = {
   entry : __dirname + "/app/main.js",
-
+  devtool : 'dval-source-map',
   output : {
     path : __dirname + "/public",
     filename : "bundle.js"
@@ -16,6 +16,10 @@ module.exports = {
         exclude : "/node_modules/",
         loader : "babel"
 
+      },
+      {
+        test:/\.css$/,
+        loader : 'style!css'
       }
     ]
   },
