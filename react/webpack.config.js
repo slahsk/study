@@ -19,10 +19,13 @@ module.exports = {
       },
       {
         test:/\.css$/,
-        loader : 'style!css'
+        loader : 'style!css?modules!postcss'
       }
     ]
   },
+  postcss:[
+    require('autoprefixer')
+  ],
   devServer : {
     contentBase : "./public",
     colors : true, //터미널 색상
