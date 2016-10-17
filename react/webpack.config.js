@@ -33,13 +33,15 @@ module.exports = {
     new webpack.BannerPlugin("cacacapipipipi"),
     new HtmlWebpackPlugin({
       template : __dirname + "/app/index.tmpl.html"
-    })
+    }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer : {
-    contentBase : "./public",
+  //  contentBase : "./public",
     colors : true, //터미널 색상
     historyApiFallback : true,
-    inline : true //페이지가 변경되여 새로 고침
+    inline : true, //페이지가 변경되여 새로 고침
+    hot : true
 //    port :8080
   }
 };
