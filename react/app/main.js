@@ -1,7 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
-import Greeter from './Greeter';
+import app from './app';
 
-import './main.css';
+import './kanban.css';
 render(
-    <Greeter/>, document.getElementById('root'));
+    <app/>, document.getElementById('root'));
