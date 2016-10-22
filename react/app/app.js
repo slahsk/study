@@ -2,6 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import KanbanBoard from './KanbanBoard';
 
+
 import './kanban.css';
 let cardList = [
   {

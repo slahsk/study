@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import Card from './Card';
+import style from './kanban.css';
 
 class List extends Component{
   render(){
@@ -8,7 +9,7 @@ class List extends Component{
     });
 
     return (
-      <div className="list">
+      <div className={style.list}>
         <h1>{this.props.title}</h1>
         {cards}
       </div>

@@ -24,12 +24,13 @@ ul{
   margin: 0;
 }
 
-.app{
+
+ .app{
   white-space: nowrap;
   height: 100%;
 }
 
-.list{
+.list {
   position: relative;
   display: inline-block;
   vertical-align: top;

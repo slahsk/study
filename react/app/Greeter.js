@@ -13,4 +13,4 @@ class Greeter extends Component {
 
 }
 
-export default Greeter
+export default Greeter;
