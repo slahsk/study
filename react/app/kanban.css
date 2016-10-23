@@ -74,8 +74,8 @@ ul{
   content: '>';
 }
 
-.card_title--is-open::before{
-  content: "ㅜ";
+.card_title_is_open::before{
+  content: "▼";
 }
 
 .checklist_task:first-child{
@@ -88,4 +88,12 @@ ul{
   display: inline-block;
   color: #d66;
   content: "+";
+}
+
+.checklist_add_task{
+  border: 1px dashed #bbb;
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 3px;
 }

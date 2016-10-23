@@ -5,7 +5,7 @@ import style from './kanban.css';
 class List extends Component{
   render(){
     var cards = this.props.cards.map((card,i) => {
-      return <Card key={i} id={card.id} title={card.title} description={card.description} tasks={card.tasks} />;
+      return <Card key={card.id} id={card.id} color={card.color} title={card.title} description={card.description} tasks={card.tasks} />;
     });
 
     return (
