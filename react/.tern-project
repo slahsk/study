@@ -1,14 +1,19 @@
 {
-  "plugins": {
-    "outline": {
-      
-    },
-    "node": {
-      
-    }
-  },
+  "ecmaVersion": 6,
   "libs": [
-    "ecma5",
-    "ecma6"
-  ]
+    "browser"
+  ],
+  "plugins": {
+  
+    "node": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
+    "modules": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    }
+  }
 }
