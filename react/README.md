@@ -7,8 +7,8 @@
 - linter-jshint
 - platformio-ide-terminal
 
-참고
-https://gomugom.github.io/etc/2016/10/08/atom-packages/
+
+[참고 Package][70ceb9d6]
 
 
-브런치 TEST
+  [70ceb9d6]: Package "https://gomugom.github.io/etc/2016/10/08/atom-packages/"

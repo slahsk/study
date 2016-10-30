@@ -1,7 +1,8 @@
-import React,{Component} from 'react';
+import React,{Component, PropTypes} from 'react';
 import style from './kanban.css';
 
 class CheckList extends Component{
+
   render(){
     let tasks = this.props.tasks.map((task) => {
       <li key={task.id} className={style.checklist_task}>
@@ -18,6 +19,10 @@ class CheckList extends Component{
       </div>
     );
   }
+};
 
-}
+CheckList.propTypes = {
+   cardId : PropTypes.number,
+   tasks : PropTypes.arrayOf(PropTypes.object)
+};
 export default CheckList;

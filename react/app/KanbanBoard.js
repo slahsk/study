@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React,{Component, PropTypes} from 'react';
 import List from './List';
 import style from './kanban.css';
 
@@ -12,6 +12,10 @@ class KanbanBoard extends Component{
       </div>
     );
   }
+};
+
+KanbanBoard.propTypes = {
+  cards :PropTypes.arrayOf(PropTypes.object)
 }
 
 export default KanbanBoard;

@@ -4,4 +4,5 @@ import app from './app';
 
 import './kanban.css';
 render(
-    <app/>, document.getElementById('root'));
+    <app/>, document.getElementById('root')
+  );

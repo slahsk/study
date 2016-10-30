@@ -1,7 +1,17 @@
-import React,{Component} from 'react';
+import React,{Component, PropTypes} from 'react';
 import CheckList from './CheckList';
 import marked from 'marked';
 import style from './kanban.css';
+
+let titlePropType  = (props, propName, ComponentName) => {
+  if(props[propName]){
+    let value = props[propName];
+
+    if(typeof value !== 'string' || value.length > 80){
+      return Error('${propName} in ${ComponentName} is longer than 80 character');
+    }
+  }
+};
 
 class Card extends Component{
   constructor(){
@@ -31,7 +41,6 @@ class Card extends Component{
       width : 7,
       backgroundColor : this.props.color
     };
-
     return (
       <div className={style.card}>
         <div style={sideColor} />
@@ -44,6 +53,14 @@ class Card extends Component{
       </div>
     );
   }
-}
+};
+
+Card.propTypes = {
+  id : PropTypes.number,
+  title: titlePropType,
+  description : PropTypes.string,
+  color : PropTypes.string,
+  tasks : PropTypes.arrayOf(PropTypes.object)
+};
 
 export default Card;
