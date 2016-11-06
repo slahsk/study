@@ -8,7 +8,7 @@ import 'babel-polyfill';
 const API_URL = 'http://kanbanapi.pro-react.com';
 const API_HEADER = {
   'Content-Type' : 'application/json',
-  Authorization : 'any-string-you-like'
+  Authorization : 'any-u-you-like'
 };
 
 
@@ -113,6 +113,7 @@ class KanBanBoardContainer extends Component{
 
               }
             }
+
           }
         }
       }
@@ -127,14 +128,59 @@ class KanBanBoardContainer extends Component{
     })
   }
 
+
+  updateCardStatus(cardId, listId){
+    let cardIndex = this.state.cards.findIndex((card)=>card.id == cardId);
+
+    let card = this.state.cards[cardIndex];
+
+    if(card.status != listId){
+      this.setState(update(this.state,{
+        cards : {
+          [cardIndex] : {
+            status: {$set : listId}
+          }
+        }
+      }));
+    }
+  }
+
+  updateCardPosition(cardId, afterId){
+
+    if(cardId !== afterId){
+
+      let cardIndex = this.sate.cards.findIndex((card)=>card.id == cardI);
+
+      let card = this.state.cards[cardIndex];
+
+      let afterIndex = this.state.cards.findIndex((card)=> card.id == afterId);
+
+      this.setState(update(this.state,{
+        cards:{
+          $splice : [
+            [cardIndex,1],
+            [afterIndex, 0, card]
+          ]
+        }
+      }));
+
+    }
+
+  }
+
   render(){
-    return <KanBanBoard cards = {this.state.cards} taskCallbacks={
-      {
+    return <KanBanBoard cards = {this.state.cards}
+      taskCallbacks={{
         toggle : this.toogleTask.bind(this),
         delete : this.deleteTask.bind(this),
         add : this.addTask.bind(this)
-      }
-    } />
+      }}
+      cardCallbacks ={{
+        updateStatus : this.updateCardStatus.bind(this),
+        updatePosition :this.updateCardPosition.bind(this)
+      }}
+
+      />
   }
 }
 
