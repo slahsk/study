@@ -84,7 +84,7 @@ ul{
   border-top: dashed 1px #ddd;
 }
 
-.checklist_task--remove::after{
+.checklist_task_remove::after{
   display: inline-block;
   color: #d66;
   content: "+";

@@ -4,8 +4,8 @@ import style from './kanban.css';
 
 class List extends Component {
     render() {
-        var cards = this.props.cards.map((card, i) => {
-            return <Card key={card.id} id={card.id} color={card.color} title={card.title} description={card.description} tasks={card.tasks}/>;
+        let cards = this.props.cards.map((card, i) => {
+            return <Card key={card.id} id={card.id} taskCallbacks={this.props.taskCallbacks} color={card.color} title={card.title} description={card.description} tasks={card.tasks}/>;
         });
 
         return (
@@ -19,7 +19,8 @@ class List extends Component {
 
 List.propTypes = {
   title: PropTypes.string.isRequired,
-  cards : PropTypes.arrayOf(PropTypes.object)
+  cards : PropTypes.arrayOf(PropTypes.object),
+  taskCallbacks:PropTypes.object
 };
 
 export default List;
