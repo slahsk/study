@@ -23,13 +23,10 @@ module.exports = {
       },
       {
         test:/\.css$/,
-        loader : 'style!css?modules!postcss'
+        loader : 'style!css?modules'
       }
     ]
   },
-  postcss:[
-    require('autoprefixer')
-  ],
   plugins : [
     new webpack.BannerPlugin("cacacapipipipi"),
     new HtmlWebpackPlugin({

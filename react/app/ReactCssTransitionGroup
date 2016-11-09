@@ -1,0 +1,9 @@
+## ReactCSSTransitionGroup
+ - `ReactTransitionGroup` add-on 을 사용 쉽게 만든것이 `ReactCSSTransitionGroup` 이다.
+ - `ng-animate` 영향을 받았다.
+
+
+
+`CSS Modules` 같이 사용하기 위해서 `css` 파일을 따로 분리 시켜야 하는거 같다.
+`{style.name}` 이런 식으로 접근하니 찾지 못한다.
+또한 작성시 카멜표기법 으로 css 명을 작성해야 한다.
