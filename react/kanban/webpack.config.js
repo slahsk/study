@@ -23,14 +23,18 @@ module.exports = {
       },
       {
         test:/\.css$/,
-        loader : 'style!css?modules'
+        // loader : 'style!css?modules'
+        loaders: [
+        'style',
+        'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
+    ]
       }
     ]
   },
   plugins : [
     new webpack.BannerPlugin("cacacapipipipi"),
     new HtmlWebpackPlugin({
-      template : __dirname + "/app/index.tmpl.html"
+      template : __dirname + "/public/index.tmpl.html"
     }),
     new webpack.HotModuleReplacementPlugin()
   ],

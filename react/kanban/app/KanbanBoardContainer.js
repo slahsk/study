@@ -36,6 +36,8 @@ class KanBanBoardContainer extends Component{
     })
   }
 
+
+
   addTask(cardId, taskName){
     let cardIndex = this.state.cards.findIndex((card) => card.id === cardId);
 
@@ -200,20 +202,87 @@ class KanBanBoardContainer extends Component{
     })
   }
 
-  render(){
-    return <KanBanBoard cards = {this.state.cards}
-      taskCallbacks={{
-        toggle : this.toogleTask.bind(this),
-        delete : this.deleteTask.bind(this),
-        add : this.addTask.bind(this)
-      }}
-      cardCallbacks ={{
-        updateStatus : this.updateCardStatus,
-        updatePosition :this.updateCardPosition,
-        prersistCardDrag : this.prersistCardDrag.bind(this)
-      }}
+  addCard(card){
+    let prevState = this.state;
 
-      />
+    if(card.id === null){
+      let card = Object.assign({},card,{id:Date.now()});
+    }
+
+
+    let nextState = update(this.state.cards,{ $push:[card] });
+
+    this.setState({cards:nextState});
+
+    fetch(`${API_URL}/cards`,{
+      method :'post',
+      headers:API_HEADER,
+      body : JSON.stringify(card)
+    })
+    .then((response) => {
+      if(response.ok){
+        return response.json();
+      }else{
+        throw new Error("Server response wann't OK");
+      }
+    })
+    .then((resoibseData) => {
+      card.id = resoibseData.id;
+      this.setState({cards:nextState});
+    })
+    .catch((error)=>{
+      this.setState(prevState)
+    });
+  }
+
+  updateCard(card){
+    let prevState = this.state;
+
+    let cardIndex = this.state.cards.findIndex((c) => c.id === card.id)
+
+    let nextState = update(this.state.cards,{
+      [cardIndex]:{
+        $set:card
+      }
+    });
+
+
+    this.setState({cards:nextState});
+
+    fetch(`${API_URL}/cards/${card.id}`,{
+      method :'pust',
+      headers:API_HEADER,
+      body : JSON.stringify(card)
+    })
+    .then((response) => {
+      if(!response.ok){
+        throw new Error("Server response wann't OK");
+      }
+    })
+    .catch((error)=>{
+      this.setState(prevState)
+    });
+
+  }
+
+  render(){
+    let kanbanBoard = this.props.children && React.cloneElement(this.props.children,{
+    cards : this.state.cards,
+    taskCallbacks :{
+      toggle : this.toogleTask.bind(this),
+      delete : this.deleteTask.bind(this),
+      add : this.addTask.bind(this)
+    },
+    cardCallbacks : {
+      updateStatus : this.updateCardStatus.bind(this),
+      updatePosition :this.updateCardPosition.bind(this),
+      prersistCardDrag : this.prersistCardDrag.bind(this),
+      addCard : this.addCard.bind(this),
+      updateCard : this.updateCard.bind(this)
+    }
+  });
+
+    return kanbanBoard;
   }
 }
 

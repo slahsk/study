@@ -31,7 +31,7 @@ module.exports = {
   ],
   plugins : [
     new HtmlWebpackPlugin({
-      template : __dirname + "/app/index.tmpl.html"
+      template : __dirname + "/public/index.tmpl.html"
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin(),

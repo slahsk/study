@@ -4,6 +4,8 @@ import marked from 'marked';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import style from './kanban.css';
 import transitions from './transitions.css'
+import {Link} from 'react-router';
+
 
 import {DragSource, DropTarget} from 'react-dnd';
 import constants from './constants';
@@ -86,11 +88,15 @@ class Card extends Component{
     return connectDropTarget(connectDragSource(
       <div className={style.card}>
         <div style={sideColor} />
-        <div
-          className={  this.state.showDetails? style.card_title && style.card_title_is_open : style.card_title}
+        <div className={style.card__edit}>
+          <Link to={`/edit/${this.props.id}`}>&#9998;</Link>
+        </div>
+        <div className={  this.state.showDetails? style.card_title && style.card_title_is_open : style.card_title}
           onClick = {this.toggleDetails.bind(this)}>
           {this.props.title}
         </div>
+
+
         <ReactCSSTransitionGroup
           transitionName={transitions}
           transitionEnterTimeout={250}
