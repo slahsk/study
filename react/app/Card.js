@@ -83,7 +83,7 @@ class Card extends Component{
       width : 7,
       backgroundColor : this.props.color
     };
-    return connectDropTarget(
+    return connectDropTarget(connectDragSource(
       <div className={style.card}>
         <div style={sideColor} />
         <div
@@ -98,7 +98,7 @@ class Card extends Component{
           {cardDetails}
         </ReactCSSTransitionGroup>
       </div>
-    );
+    ));
   }
 };
 
