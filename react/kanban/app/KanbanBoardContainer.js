@@ -9,7 +9,7 @@ import 'babel-polyfill';
 const API_URL = 'http://kanbanapi.pro-react.com';
 const API_HEADER = {
   'Content-Type' : 'application/json',
-  Authorization : 'any-u-you-like'
+  Authorization : 'any-string-you-like'
 };
 
 
