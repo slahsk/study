@@ -238,7 +238,7 @@ class KanBanBoardContainer extends Component{
   updateCard(card){
     let prevState = this.state;
 
-    let cardIndex = this.state.cards.findIndex((c) => c.id === card.id)
+    let cardIndex = this.state.cards.findIndex((c) => c.id == card.id)
 
     let nextState = update(this.state.cards,{
       [cardIndex]:{
@@ -246,11 +246,10 @@ class KanBanBoardContainer extends Component{
       }
     });
 
-
     this.setState({cards:nextState});
 
     fetch(`${API_URL}/cards/${card.id}`,{
-      method :'pust',
+      method :'put',
       headers:API_HEADER,
       body : JSON.stringify(card)
     })

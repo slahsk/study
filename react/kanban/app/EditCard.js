@@ -3,8 +3,11 @@ import CardForm from './CardForm';
 
 class EditCard extends Component{
   componentWillMount() {
-    let card = this.props.cards.find((card)=>card.id === this.props.params.card_id);
-    this.setState([...card]);
+    let card = this.props.cards.find((card)=> card.id == this.props.params.card_id);
+
+    //this.setState([...card]);
+    this.state = card;
+console.log(card);
   }
 
   handleChange(field,value){
@@ -13,17 +16,21 @@ class EditCard extends Component{
 
   handleSubmit(e){
     e.preventDefault();
+    console.log(this.state);
     this.props.cardCallbacks.updateCard(this.state);
-    this.props.history.pushState(null,'/');
+    this.props.router.push('/');
   }
 
   handleClose(e){
-    this.props.history.pushState(null,'/');
+    this.props.router.push('/');
   }
 
   render(){
+console.log(this)
+
     return(
       <CardForm draftCard={this.state}
+        buttonLabel="Edit card"
         handleChange={this.handleChange.bind(this)}
         handleSubmit={this.handleSubmit.bind(this)}
         handleClose={this.handleClose.bind(this)} />

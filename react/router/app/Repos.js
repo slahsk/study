@@ -24,7 +24,7 @@ class Repos extends Component{
       this.setState({repositories : responseData});
     })
     .catch((error) => {
-      this.props.history.pushState(null,'/error');
+      this.props.router.push('/error');
     });
   }
 
