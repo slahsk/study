@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.sb.entity.Album;
 import com.sb.entity.Item;
 
-@Controller
+//@Controller
 public class ItemControlloer {
 	@Autowired
 	ItemService itemService;

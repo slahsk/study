@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sb.entity.Member;
 
-@Controller
+//@Controller
 public class MemberController {
 	
 	@Autowired

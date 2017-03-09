@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sb.entity.Album;
 import com.sb.entity.Item;
 
-@Service
-@Transactional
+//@Service
+//@Transactional
 public class ItemService {
 	@Autowired
 	ItemRepository itemRepository; 

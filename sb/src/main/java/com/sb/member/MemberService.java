@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sb.entity.Member;
 
-@Service
-@Transactional
+//@Service
+//@Transactional
 public class MemberService {
 	@Autowired
 	private MemberRepository memberRepository;

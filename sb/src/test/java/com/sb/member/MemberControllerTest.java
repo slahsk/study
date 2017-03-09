@@ -8,12 +8,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,14 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
-import com.sb.SbApplication;
 import com.sb.entity.Member;
 import com.sb.entity.Order;
 import com.sb.item.ItemService;
 import com.sb.order.OrderService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = SbApplication.class)
+//@SpringApplicationConfiguration(classes = SbApplication.class)
 @WebAppConfiguration
 @Transactional
 public class MemberControllerTest {
@@ -39,8 +36,8 @@ public class MemberControllerTest {
 	@Autowired
 	WebApplicationContext wac;
 	
-	@Autowired
-	ObjectMapper mapper;
+//	@Autowired
+//	ObjectMapper mapper;
 	
 	MockMvc mockMvc;
 	
