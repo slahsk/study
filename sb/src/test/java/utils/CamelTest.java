@@ -1,16 +1,11 @@
-	import static org.junit.Assert.assertEquals;
+package utils;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-
-import lombok.Data;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CamelTest{
