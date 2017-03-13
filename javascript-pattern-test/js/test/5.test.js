@@ -1,4 +1,4 @@
-var Conference = require('../lib/5_1.js');
+var Conference = require('../lib/5.js');
 
 describe('Conference.attendeeCollection',function(){
   describe('contains(attendee)',function(){
