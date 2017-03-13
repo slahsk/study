@@ -1,2 +1,11 @@
-*/node_modules/
+
 */target/
+
+# dependencies
+node_modules
+
+# production
+*/build
+ 
+# misc
+*/npm-debug.log
