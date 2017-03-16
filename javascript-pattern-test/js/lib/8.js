@@ -1,4 +1,5 @@
 var Conference = Conference || {};
+var Aop = require('./Aop.js');
 
 Conference.memoizedRestaurantApi = function(thiredPartyApi){
   'use strict'
@@ -31,5 +32,26 @@ exports.ThirdParty = {
 
       }
     }
+  }
+};
+
+exports.Aspects = {
+  returnValueCache : function(){
+    var cache = {};
+
+    return {
+      advice : function(targetInfo){
+        var cacheKey = JSON.stringify(targetInfo.args);
+
+        if(cache.hasOwnProperty(cacheKey)){
+          return cache[cacheKey];
+        }
+
+        var returnValue = Aop.next(targetInfo);
+        cache[cacheKey] = returnValue;
+
+        return returnValue;
+      }
+    };
   }
 };

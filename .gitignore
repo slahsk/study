@@ -9,3 +9,5 @@ node_modules
  
 # misc
 */npm-debug.log
+
+*/debug.log

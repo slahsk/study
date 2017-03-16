@@ -2,6 +2,10 @@
 
 var Conference = require('../lib/8.js').Conference;
 var ThirdParty = require('../lib/8.js').ThirdParty;
+var Aspects = require('../lib/8.js').Aspects;
+//
+var Aop = require('../lib/Aop.js');
+
 
 describe('memoizedRestaurantsApi',function(){
 
@@ -78,7 +82,7 @@ describe('returnValueCache',function(){
     testFunctionExcutionCount = 0;
     testValue = {};
     testObject = {
-      testFUnction : function(arg){
+      testFunction : function(arg){
         return testValue;
       }
     };
@@ -86,8 +90,55 @@ describe('returnValueCache',function(){
     spyOn(testObject, 'testFunction').and.callThrough();
     spyReference = testObject.testFunction;
 
-    Aop.around('testFunction',Aspects.returnValueCache().advice,testObject);
+    Aop.around('testFunction', Aspects.returnValueCache().advice, testObject);
 
-    arg = [{key:'value'},'someValue'];
+    args = [{key:'value'},'someValue'];
   });
+
+  describe('advice(targetInfo)',function(){
+    it('첫 번째 실행 시 작성괸 함수의 반환값을 반환하다.', function(){
+      var value = testObject.testFunction.apply(testObject, args);
+      expect(value).toBe(testValue);
+    });
+
+
+    it('여러 번 실행 시 장식된 함수의 반환값을 반환한다.', function(){
+      var iterations = 3;
+
+      for(var i = 0; i < iterations; i++){
+        var value = testObject.testFunction.apply(testObject, args);
+        expect(value).toBe(testValue);
+      }
+    });
+  });
+
+    it('같은 키값으로 여러 번 실행해도 장신된 함수만 실행한다.', function(){
+      var iterations = 3;
+
+      for(var i = 0; i < iterations; i++){
+        var value = testObject.testFunction.apply(testObject,args);
+        expect(value).toBe(testObject);
+      }
+
+      expect(spyReference.calls.count()).tbBe(1);
+    });
+    
+    it('고유한 각 키값마다 꼭 한 번씩 장식된 함수를 실행한다.', function(){
+      var keyValues = ['value1','value2','valeu3'];
+
+      keyValues.forEach(function(arg){
+        var value = testObject.testFunction(arg);
+      });
+
+      keyValues.forEach(function(arg){
+        var value = testObject.testFunction(arg);
+      });
+
+      expect(spyReference.calls.count()).toBe(keyValues.length);
+
+    });
+
+
+
+
 });
