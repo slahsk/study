@@ -12,11 +12,6 @@
  * $Revision: 236 $
  */
 
-/*
- *  2015.06.15 주석작업 시작 GitHub Setting by 이은철
- *  2015.06.16 동기화 테스트
- *  2015.06.16 eclipse 커밋 테스트
- */
 
 /*jslint browser: true, onevar: true, undef: true, bitwise: true, strict: true */
 /*global window : false, clearInterval: false, clearTimeout: false, document: false, setInterval: false, setTimeout: false, jQuery: false, navigator: false, XSLTProcessor: false, DOMParser: false, XMLSerializer: false*/
