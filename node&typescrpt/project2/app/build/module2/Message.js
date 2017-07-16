@@ -4,8 +4,8 @@ var Message = (function () {
     function Message() {
     }
     Message.prototype.getMessage = function () {
-        return "hello world!";
+        return "hello world";
     };
     return Message;
 }());
-exports.Message = Message;
+exports["default"] = Message;

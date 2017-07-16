@@ -1,8 +1,5 @@
-export class Message{
-    msg:string;
-
-
+export default class Message{
     getMessage():string{
-        return "hello world!";
+        return "hello world";
     }
 }

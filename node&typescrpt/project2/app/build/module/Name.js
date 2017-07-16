@@ -9,4 +9,4 @@ var Name = (function () {
     };
     return Name;
 }());
-exports.Name = Name;
+exports["default"] = Name;

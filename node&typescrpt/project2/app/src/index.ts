@@ -1,5 +1,5 @@
-import {Name} from './module/Name';
-import {Message} from './module2/Message';
+import Name from './module/Name';
+import Message from './module2/Message';
 
 
 
@@ -8,3 +8,4 @@ let messageObj = new Message();
 
 
 console.log(`${nameObj.getName()} ${messageObj.getMessage()}`);
+
